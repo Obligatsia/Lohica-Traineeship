@@ -1,0 +1,12 @@
+#main{
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+}
+#registerForm{
+    width: 70%;
+    margin: 0 auto;
+}
+#registerForm label{
+    width: 25%;
+}

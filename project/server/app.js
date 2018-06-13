@@ -7,7 +7,7 @@ db.setUpConnection();
 
 const app = express();
 
-app.use(bodyParser, json());
+app.use(bodyParser.json());
 
 app.get('/notes', (req, res)=>{
   db.listNotes().then(data => res.send(data));
