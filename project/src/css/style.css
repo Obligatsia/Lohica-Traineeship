@@ -1,12 +1,18 @@
 #main{
-    width: 90%;
-    margin: 0 auto;
-    padding: 20px;
-}
-#registerForm{
-    width: 70%;
+    width: 100%;
     margin: 0 auto;
 }
-#registerForm label{
-    width: 25%;
+#registerForm {
+    margin: 0 auto;
+    margin-top: 20px;
+}
+.form-group{
+    font-size: 14px;
+}
+header{
+    padding: 10px;
+    border-bottom: 1px solid #5a6268;
+}
+header img{
+    margin-right: 20px;
 }
