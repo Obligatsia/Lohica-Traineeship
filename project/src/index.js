@@ -18,9 +18,6 @@ let main = (
     <FormContent />
   </div>
 )
-ReactDOM.render(
-<HeaderContent />, parent
-)
 
 ReactDOM.render(
   main, parent
