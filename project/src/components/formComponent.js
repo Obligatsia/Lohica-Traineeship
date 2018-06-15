@@ -2,151 +2,125 @@ const React = require ('react');
 const ReactDOM = require ('react-dom');
 require  ('../../node_modules/bootstrap/dist/css/bootstrap.min.css');
 require ('../css/style.css');
-require ('./validationComponent.js');
+const ValidationMethods = require ('./validationComponent.js');
+
+const Validation = new ValidationMethods();
+let users = [];
 
 module.exports = class FormContent extends React.Component{
   constructor(props){
     super(props);
-    let name = '';
-    let surName = '';
-    let email = '';
-    let photo = '';
-    let age = '';
-    let middleName = '';
-    let nameIsValid = this.validateName(name);
-    let surNameIsValid = this.validateName(surName);
-    let middleNameIsValid = this.validateName(middleName);
-    let emailIsValid = this.validateEmail(email);
-    let photoIsValid = this.validatePhoto(photo);
-    let ageIsValid = this.validateAge(age);
-    this.state={name: name, surName: surName, email: email, photo: photo, age: age, middleName: middleName, nameValid: nameIsValid, surNameValid: surNameIsValid, emailValid: emailIsValid, photoValid: photoIsValid, ageValid: ageIsValid,  middleNameValid: middleNameIsValid};
+    this.state={name: {value: '', isValid: false}, surName: {value: '', isValid: false}, email: {value: '', isValid: false}, photo: {value: '', isValid: false}, gender: {value: 'male', isValid: true}, age: {value: '', isValid: false}, middleName: {value: '', isValid: false}};
   this.onNameChange = this.onNameChange.bind(this);
   this.onSurNameChange = this.onSurNameChange.bind(this);
   this.onEmailChange = this.onEmailChange.bind(this);
   this.onPhotoChange = this.onPhotoChange.bind(this);
+  this.onGenderChange = this.onGenderChange.bind(this);
   this.onAgeChange = this.onAgeChange.bind(this);
   this.onMiddleNameChange = this.onMiddleNameChange.bind(this);
   this.handleSubmit = this.handleSubmit.bind(this);
   }
-  validateName(name){
-    let pattern = /^[A-Za-z]{1,32}$/;
-    let result = pattern.exec(name);
-    if (!result) {
-      console.log(this);
-      return false;
-    } else {
-      return true;
-    }
-  }
 
-  validateEmail(email){
-    let pattern = /^\S+@\S+\.\S+$/;
-    let result = pattern.exec(email);
-    if (!result) {
-      console.log(this);
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  validatePhoto(photo){
-    let pattern = /^\S+\.\png|jpg|jpeg$/;
-    let result = pattern.exec(photo);
-    if (!result) {
-      console.log('noooooooo');
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  validateAge(age){
-    let pattern = /^([1-9]\d?)$/;
-    let result = pattern.exec(age);
-    if (!result) {
-      console.log('noooooooo');
-      return false;
-    } else {
-      return true;
-    }
-  }
   onNameChange(e){
     let val = e.target.value;
-    console.log(val);
-    let valid = this.validateName(val);
-    this.setState({name: val, nameValid: valid});
+    let valid = Validation.validateName(val);
+    this.setState({name: {value: val, isValid: valid}});
   }
   onSurNameChange(e){
     let val = e.target.value;
-    console.log(val);
-    let valid = this.validateName(val);
-    this.setState({surName: val, surNameValid: valid});
+    let valid = Validation.validateName(val);
+    this.setState({surName: {value: val, isValid: valid}});
   }
   onMiddleNameChange(e){
     let val = e.target.value;
-    console.log(val);
-    let valid = this.validateName(val);
-    this.setState({middleName: val, middleNameValid: valid});
+    let valid = Validation.validateName(val);
+    this.setState({middleName: {value: val, isValid: valid}});
   }
   onEmailChange(e){
     let val = e.target.value;
-    console.log(val);
-    let valid = this.validateEmail(val);
-    this.setState({email: val, emailValid: valid});
+    let valid = Validation.validateEmail(val);
+    this.setState({email: {value: val, isValid: valid}});
   }
   onPhotoChange(e){
     let val = e.target.value;
-    console.log(val);
-    let valid = this.validatePhoto(val);
-    this.setState({photo: val, photoValid: valid});
+    let valid = Validation.validatePhoto(val);
+    this.setState({photo: {value: val, isValid: valid}});
+  }
+  onGenderChange(e){
+    let val = e.target.value;
+    this.setState({gender: {value: val, isValid: true}});
   }
   onAgeChange(e){
     let val = e.target.value;
-    console.log(val);
-    let valid = this.validateAge(val);
-    this.setState({age: val, ageValid: valid});
+    let valid = Validation.validateAge(val);
+    this.setState({age: {value: val, isValid: valid}});
   }
 
 
   handleSubmit(e){
     e.preventDefault();
-    if(!this.state.nameValid&&!this.state.surNameValid){
-      alert(this.state.name);
+    if(this.state.name.isValid&&this.state.surName.isValid&&this.state.email.isValid&&this.state.photo.isValid&&this.state.gender.isValid&&this.state.age.isValid){
+      const psw = Math.random().toString(36).slice(-8);
+
+      let newUser = {
+        name:this.state.name.value,
+        surName:this.state.surName.value,
+        email:this.state.email.value,
+        photo:this.state.photo.value,
+        gender:this.state.gender.value,
+        age:this.state.age.value,
+        middleName:this.state.middleName.value||null,
+        password: psw
+      };
+      users.push(newUser);
+      console.log(users);
+
     }
   }
 
 
+
   render(){
+    const nameClassValid = this.state.name.isValid ? 'form-control is-valid' : 'form-control is-invalid';
+    const surNameClassValid = this.state.surName.isValid ? 'form-control is-valid' : 'form-control is-invalid';
+    const emailClassValid = this.state.email.isValid ? 'form-control is-valid' : 'form-control is-invalid';
+    const photoClassValid = this.state.photo.isValid ? 'form-control is-valid' : 'form-control is-invalid';
+    const genderClassValid = this.state.gender.isValid ? 'form-control is-valid' : 'form-control is-invalid';
+    const ageClassValid = this.state.age.isValid ? 'form-control is-valid' : 'form-control is-invalid';
+    const middleNameClassValid = this.state.middleName.isValid ? 'form-control is-valid' : 'form-control is-invalid';
     return <form className = 'row d-flex flex-column col-sm-3' id='registerForm' >
 
     <div className='form-group'>
       <label htmlFor ='name'>Enter your Name</label>
-    <input className="form-control" type ='text' placeholder='John' id='name' onChange = {this.onNameChange} value = {this.state.name}></input>
-    <small id="nameHelp" className="form-text text-muted">latin characters, length 1-32</small>
+    <input className={nameClassValid} type ='text' placeholder='John' id='name' onChange = {this.onNameChange} value = {this.state.name.value}></input>
+    <div className="invalid-feedback">Only latin letters</div>
+    <small id="nameHelp" className="form-text text-muted">latin letters, length 1-32</small>
     </div>
 
     <div className='form-group'>
       <label htmlFor ='surname' >Enter your Surname</label>
-    <input type ='text' className="form-control" placeholder='Smith' id='surname' onChange = {this.onSurNameChange} value = {this.state.surName}></input>
-    <small id="surNameHelp" className="form-text text-muted">latin characters, length 1-32</small>
+    <input type ='text' className={surNameClassValid} placeholder='Smith' id='surname' onChange = {this.onSurNameChange} value = {this.state.surName.value}></input>
+    <div className="invalid-feedback">Only latin letters</div>
+    <small id="surNameHelp" className="form-text text-muted">latin letters, length 1-32</small>
     </div>
 
     <div className='form-group'>
       <label htmlFor ='email'>Enter your e-mail</label>
-    <input className="form-control" type ='text' placeholder='johnsmith@gmail.com' id='email' onChange = {this.onEmailChange} value = {this.state.email}></input>
+    <input className={emailClassValid} type ='text' placeholder='johnsmith@gmail.com' id='email' onChange = {this.onEmailChange} value = {this.state.email.value}></input>
+    <div className="invalid-feedback">Please, enter correct email</div>
     <small id="emailHelp" className="form-text text-muted">f.e. 'johnsmith@gmail.com'</small>
     </div>
 
     <div className='form-group'>
       <label htmlFor ='photo'>Choose photo</label>
-    <input className="form-control-file" type ='file' id='photo' onChange = {this.onPhotoChange} value = {this.state.photo} ></input>
+    <input className={photoClassValid} type ='file' id='photo' onChange = {this.onPhotoChange} value = {this.state.photo.value} ></input>
+    <div className="invalid-feedback">Files formate only JPEG, JPG, PNG</div>
     <small id="emailHelp" className="form-text text-muted">size between 40kb and 5mb</small>
     </div>
 
     <div className='form-group'>
       <label htmlFor='gender'>Select your gender</label>
-    <select className="form-control" id='gender' onChange = {this.onGenderChange}>
+    <select className={genderClassValid} id='gender' value = {this.state.gender.value} onChange = {this.onGenderChange}>
       <option value = 'male'>Male</option>
       <option value = 'female'>Female</option>
       </select>
@@ -154,13 +128,15 @@ module.exports = class FormContent extends React.Component{
 
       <div className='form-group'>
       <label htmlFor ='age' >Select your age</label>
-    <input className="form-control" type ='number' id='age'  placeholder = '18'onChange = {this.onAgeChange} value = {this.state.age}></input>
+    <input className={ageClassValid} type ='number' id='age'  placeholder = '18'onChange = {this.onAgeChange} value = {this.state.age.value}></input>
+    <div className="invalid-feedback">Please, enter correct age</div>
     </div>
 
     <div className='form-group'>
       <label htmlFor ='middleName'  >Enter your Middle Name</label>
-    <input className="form-control" type ='text' placeholder='Brown' id='middleName'onChange = {this.onMiddleNameChange} value = {this.state.middleName} ></input>
-    <small id="middleNameHelp" className="form-text text-muted">latin characters, length 1-32</small>
+    <input className={middleNameClassValid} type ='text' placeholder='Brown' id='middleName'onChange = {this.onMiddleNameChange} value = {this.state.middleName.value} ></input>
+    <div className="invalid-feedback">Only latin letters</div>
+    <small id="middleNameHelp" className="form-text text-muted">latin letters, length 1-32</small>
     </div>
     <div className='form-group'>
       <input type ='button' className='btn btn-primary' value = 'Save' id='submitBtn' onClick = {this.handleSubmit}></input>
