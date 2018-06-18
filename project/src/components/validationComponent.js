@@ -5,8 +5,10 @@ module.exports = class Validation {
       let pattern = /^[A-Za-z]{1,32}$/;
       let result = pattern.exec(name);
       if (!result) {
+          console.log('no')
         return false;
       } else {
+          console.log('yes')
         return true;
       }
     }

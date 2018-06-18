@@ -1,7 +1,12 @@
 const React = require ('react');
 const ReactDOM = require ('react-dom');
+const { connect } = require ('react-redux');
+const {createStore} = require ('redux');
+const { Provider } = require ('react-redux');
 require  ('../../node_modules/bootstrap/dist/css/bootstrap.min.css');
-require ('../css/style.css');
+const mapStateToProps = state => ({
+  appName: state.appName
+});
 const ValidationMethods = require ('./validationComponent.js');
 
 const Validation = new ValidationMethods();
@@ -88,6 +93,8 @@ module.exports = class FormContent extends React.Component{
     const genderClassValid = this.state.gender.isValid ? 'form-control is-valid' : 'form-control is-invalid';
     const ageClassValid = this.state.age.isValid ? 'form-control is-valid' : 'form-control is-invalid';
     const middleNameClassValid = this.state.middleName.isValid ? 'form-control is-valid' : 'form-control is-invalid';
+
+
     return <form className = 'row d-flex flex-column col-sm-3' id='registerForm' >
 
     <div className='form-group'>

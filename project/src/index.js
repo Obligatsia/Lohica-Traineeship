@@ -1,23 +1,27 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-
+import {render} from 'react-dom';
 import {createStore} from 'redux';
+import { Provider } from 'react-redux';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './css/style.css';
 import './index.css';
-import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import FormContent from './components/formComponent.js';
-import HeaderContent from './components/headerComponent.js';
+// import configureStore from './store/createStore.js';
+import rootReducer from './reducers/index';
+import App from './components/App.js';
+
+
+const store = createStore(rootReducer);
 
 let parent = document.getElementById('main');
-let main = (
-  <div>
-    <HeaderContent />
-    <FormContent />
-  </div>
+
+render(
+<Provider store={store}>
+ <App />
+  </Provider>,
+  parent
 )
-ReactDOM.render(
-  main, parent
-)
+
+
+
 
