@@ -1,12 +1,14 @@
 import React from 'react'
 import Header from './Header'
-import AddValue from '../containers/addValue'
+import AddName from '../containers/addValue'
+import AddSurName from '../containers/addValue'
 import VisibleList from '../containers/visibleList'
 
 const App = () => (
     <div>
     <Header />
-    <AddValue />
+    <AddName />
+    <AddSurName />
     <VisibleList />
     </div>
 )

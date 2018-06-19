@@ -4,6 +4,6 @@ import visibilityFilter from './visibilityFilter'
 
 
 export default combineReducers ({
-  userName: value,
+  user: value,
   visibilityFilter
 })

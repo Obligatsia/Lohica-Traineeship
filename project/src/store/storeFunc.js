@@ -8,4 +8,5 @@ export store.subscribe(()=>{
 })
 
 export store.dispatch({type: 'ADD_NAME'});
+export store.dispatch({type: 'ADD_SURNAME'});
 

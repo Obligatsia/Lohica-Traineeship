@@ -1,8 +1,14 @@
 let nextValueId = 0
-export const addValue = text => ({
-    type: 'ADD_VALUE',
+export const addName = (nameText, nameIsValid) => ({
+    type: 'ADD_NAME',
     id: nextValueId++,
-    text
+    name:{value: nameText, isValid: nameIsValid}
+})
+
+export const addSurName = (surNameText, surNameIsValid) => ({
+    type: 'ADD_SURNAME',
+    id: nextValueId++,
+    name:{value: surNameText, isValid: surNameIsValid}
 })
 
 export const setVisibilityFilter = filter => ({
