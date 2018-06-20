@@ -1,34 +1,24 @@
-const value = (state = {}, action) => {
+const value = (state = {name: {isValid:true}, surName: {isValid:true}, email: {isValid:true}, photo: {isValid:true}, gender: {isValid:true}, age: {isValid:true}, middleName: {isValid:true}, password:{isValid:true}}, action) => {
   switch (action.type) {
-    case 'ADD_NAME':
-      console.log(state);
-      return [
-        ...state,
-        {
-          id: action.id,
-            name:{value: action.name.value, isValid: action.name.isValid},
-            surName:{value: '', isValid: ''},
-          completed: false
-        }
-      ]
-      case 'ADD_SURNAME':
-          console.log(action);
-          return [
+
+    case 'TOGGLE_VALUE':
+      return state.map(value =>
+        (value.id === action.id)
+          ? {...value, completed: !value.completed}
+          : value
+      );
+      case 'ADD_VALUE':
+        return {
+            ...state,
+            [action.payload.name]: action.payload
+        };
+      case 'ADD_PSW':
+          return {
               ...state,
-              {
-                  id: action.id,
-                  surName:{value: action.surName.value, isValid: action.surName.isValid},
-                  completed: false
-              }
-          ]
-    // case 'TOGGLE_VALUE':
-    //   return state.map(value =>
-    //     (value.id === action.id)
-    //       ? {...value, completed: !value.completed}
-    //       : value
-    //   )
+              [action.payload.name]: action.payload
+          };
     default:
-      return state
+      return {...state}
   }
 }
 

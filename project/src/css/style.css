@@ -16,3 +16,21 @@ header{
 header img{
     margin-right: 20px;
 }
+#btnGroup{
+    position: relative;
+}
+.errorMsg:after{
+    content: 'Fill all fields';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
+}
+#registerForm label:before{
+    content: '*';
+    color: red;
+}
+#registerForm #optional:before{
+    content: '';
+}

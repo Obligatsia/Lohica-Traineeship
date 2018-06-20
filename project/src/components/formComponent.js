@@ -83,8 +83,6 @@ module.exports = class FormContent extends React.Component{
     }
   }
 
-
-
   render(){
     const nameClassValid = this.state.name.isValid ? 'form-control is-valid' : 'form-control is-invalid';
     const surNameClassValid = this.state.surName.isValid ? 'form-control is-valid' : 'form-control is-invalid';

@@ -2,13 +2,12 @@ const React = require ('react');
 
 module.exports = class Validation {
     validateName (name){
+        console.log(name);
       let pattern = /^[A-Za-z]{1,32}$/;
       let result = pattern.exec(name);
       if (!result) {
-          console.log('no')
         return false;
       } else {
-          console.log('yes')
         return true;
       }
     }

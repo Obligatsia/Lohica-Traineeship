@@ -1,28 +1,27 @@
 let nextValueId = 0
-export const addName = (nameText, nameIsValid) => ({
-    type: 'ADD_NAME',
+export const addValue = (name, text, isValid) => ({
+    type: 'ADD_VALUE',
     id: nextValueId++,
-    name:{value: nameText, isValid: nameIsValid}
+    payload:{name, value: text, isValid: isValid}
 })
+// export const addPassword = (name, text) => ({
+//     type: 'ADD_PSW',
+//     id: nextValueId++,
+//     payload:{name, password: text}
+// })
 
-export const addSurName = (surNameText, surNameIsValid) => ({
-    type: 'ADD_SURNAME',
-    id: nextValueId++,
-    name:{value: surNameText, isValid: surNameIsValid}
-})
-
-export const setVisibilityFilter = filter => ({
-    type: 'SET_VISIBILITY_FILTER',
-    filter
-})
-
-export const toggleValue = id => ({
-    type: 'TOGGLE_VALUE',
-    id
-})
-
-export const VisibilityFilters = {
-    SHOW_ALL: 'SHOW_ALL',
-    SHOW_COMPLETED: 'SHOW_COMPLETED',
-    SHOW_ACTIVE: 'SHOW_ACTIVE'
-}
+// export const setVisibilityFilter = filter => ({
+//     type: 'SET_VISIBILITY_FILTER',
+//     filter
+// })
+//
+// export const toggleValue = id => ({
+//     type: 'TOGGLE_VALUE',
+//     id
+// })
+//
+// export const VisibilityFilters = {
+//     SHOW_ALL: 'SHOW_ALL',
+//     SHOW_COMPLETED: 'SHOW_COMPLETED',
+//     SHOW_ACTIVE: 'SHOW_ACTIVE'
+// }
