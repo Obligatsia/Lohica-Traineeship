@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import { connect } from 'react-redux'
+import {$, jQuery} from '../../node_modules/jquery/dist/jquery.min';
 import { addValue } from '../actions/index'
 // import { addPassword } from './../actions'
 import { bindActionCreators } from 'redux';
@@ -60,7 +61,6 @@ class Form extends Component {
                 this.props.dispatch(addValue('middleName', val, valid));
             }
 
-            console.log(this.props.user);
 
         let onSubmitForm = ()=>{
             let valid;
@@ -78,6 +78,29 @@ class Form extends Component {
                 const psw = Math.random().toString(36).slice(-8);
                 this.props.dispatch(addValue('password', psw, true));
                 document.getElementById('btnGroup').classList.remove('errorMsg');
+                let user = this.props.user;
+
+                let sendUser = new XMLHttpRequest();
+                let userItem = JSON.stringify(user);
+                sendUser.open('POST', 'http://localhost:8000/addUser', true);
+                sendUser.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                sendUser.onreadystatechange = function () {
+                    if (sendUser.readyState === 4) {
+                        if (sendUser.status != 200) {
+                            console.log(sendUser.status + ': ' + sendUser.statusText);
+                        } else {
+                            console.log(sendUser.responseText);
+
+                        }
+                    }
+                };
+
+                sendUser.send(userItem);
+
+
+
+
+
             } else{
                 document.getElementById('btnGroup').classList.add('errorMsg');
             }
@@ -91,7 +114,7 @@ class Form extends Component {
             const middleNameClassValid = this.props.user.middleName.isValid  ? 'form-control is-valid' : 'form-control is-invalid';
             return (
                 <div>
-                <form className = 'row d-flex flex-column col-sm-3' id='registerForm'>
+                <form method='post' action = '/addUser' className = 'row d-flex flex-column col-sm-3' id='registerForm'>
         <div className='form-group'>
                 <label htmlFor ='name'>Enter your Name</label>
             <input  ref={node => nameField = node} className = {nameClassValid} type ='text' placeholder='John' id='name' onChange ={onNameChange}></input>

@@ -1,4 +1,4 @@
-const value = (state = {name: {isValid:true}, surName: {isValid:true}, email: {isValid:true}, photo: {isValid:true}, gender: {isValid:true}, age: {isValid:true}, middleName: {isValid:true}, password:{isValid:true}}, action) => {
+const value = (state = {name: {isValid:true}, surName: {isValid:true}, email: {isValid:true}, photo: {isValid:true}, gender: {value: 'male', isValid:true}, age: {isValid:true}, middleName: {isValid:true}, password:{isValid:true}}, action) => {
   switch (action.type) {
 
     case 'TOGGLE_VALUE':

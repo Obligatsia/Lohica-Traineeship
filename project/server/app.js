@@ -1,26 +1,33 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
+const cors = require('cors');
+const IsValid = require('../src/components/validationComponent');
 
-const db = require('./utils/dataBaseUtils.js');
+const Validation = new IsValid();
 
-db.setUpConnection();
 
 const app = express();
-
+app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/notes', (req, res)=>{
-  db.listNotes().then(data => res.send(data));
-});
 
-app.post('/notes', (req, res)=>{
-  db.createNote(req, body).then(data => res.send(data));
-});
 
-app.delete('/notes/:id', (req, res)=>{
-  db.createNote(req, params, id).then(data => res.send(data));
-});
+    app.post('/addUser', async (req, res) => {
+        const user = req.body;
+        try {
+            const result = await Validation.validateName(user.name.value);
+            res.send(200, result);
+        } catch (err) {
+            console.log(err)
+        }
 
-const server = app.listen(3000, ()=>{
-  console.log('Hello world');
-});
+    })
+
+
+
+
+
+app.listen(8000, (()=>{
+    console.log('listening');
+}))
