@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from 'react'
 import { connect } from 'react-redux'
 import {$, jQuery} from '../../node_modules/jquery/dist/jquery.min';
 import { addValue } from '../actions/index'
-// import { addPassword } from './../actions'
 import { bindActionCreators } from 'redux';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
@@ -25,7 +24,9 @@ class Form extends Component {
             let ageField;
             let middleNameField;
             let submitBtn;
-            let onNameChange= (e)=>{
+        let imgFile;
+
+        let onNameChange= (e)=>{
                 let val = e.target.value;
                 let valid = Validation.validateName(nameField.value);
                 this.props.dispatch(addValue('name', val, valid));
@@ -42,8 +43,9 @@ class Form extends Component {
             }
             let onPhotoChange= (e)=>{
                 let val = e.target.value;
+                imgFile = e.target.files[0];
                 let valid = Validation.validatePhoto(photoField.value);
-                this.props.dispatch(addValue('photo', val, valid));
+                this.props.dispatch(addValue('photo', e.target.files[0], valid));
             }
             let onGenderChange= (e)=>{
                 let val = e.target.value;
@@ -75,21 +77,30 @@ class Form extends Component {
                 }
             }
             if(valid && nameField.value && surNameField.value && emailField.value && photoField.value && genderField.value && ageField.value){
-                const psw = Math.random().toString(36).slice(-8);
-                this.props.dispatch(addValue('password', psw, true));
+
+
+
+
                 document.getElementById('btnGroup').classList.remove('errorMsg');
                 let user = this.props.user;
 
                 let sendUser = new XMLHttpRequest();
+
                 let userItem = JSON.stringify(user);
                 sendUser.open('POST', 'http://localhost:8000/addUser', true);
-                sendUser.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                // sendUser.setRequestHeader('Content-Type', 'multipart/form-data');
+
+                sendUser.setRequestHeader('Content-Type', 'application/json');
+                sendUser.setRequestHeader('Content-Disposition', 'attachment; filename=user.photo.value.name ');
+
                 sendUser.onreadystatechange = function () {
                     if (sendUser.readyState === 4) {
                         if (sendUser.status != 200) {
                             console.log(sendUser.status + ': ' + sendUser.statusText);
                         } else {
-                            console.log(sendUser.responseText);
+
+                            let newUser = JSON.parse(sendUser.responseText);
+                            console.log(newUser);
 
                         }
                     }
@@ -138,7 +149,7 @@ class Form extends Component {
 
             <div className='form-group'>
                 <label htmlFor ='photo'>Choose photo</label>
-            <input  ref={node => photoField = node} className = {photoClassValid} type ='file' id='photo' onChange ={onPhotoChange}></input>
+            <input  ref={node => photoField = node} className = {photoClassValid} type ='file' id='photo' onChange ={onPhotoChange} name = 'photo'></input>
                 <div className="invalid-feedback">Files formate only JPEG, JPG, PNG</div>
             <small id="emailHelp" className="form-text text-muted">size between 40kb and 5mb</small>
             </div>

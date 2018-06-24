@@ -12,9 +12,9 @@ import App from './components/App.js';
 
 
 const store = createStore(rootReducer);
-store.subscribe(() =>
-    console.log(store.getState())
-)
+// store.subscribe(() =>
+//     console.log(store.getState())
+// )
 
 let parent = document.getElementById('main');
 
