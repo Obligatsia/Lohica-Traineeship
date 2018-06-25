@@ -4,10 +4,11 @@ let userSchema = new mongoose.Schema({
     name: String,
     surName: String,
     email: String,
-    photo: String,
+    photo: { data: Buffer, contentType: String, name: String },
     gender: String,
     age: Number,
     middleName: String,
+    password: String,
     updated_at: { type: Date, default: Date.now },
 });
 

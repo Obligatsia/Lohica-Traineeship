@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import { connect } from 'react-redux'
-import {$, jQuery} from '../../node_modules/jquery/dist/jquery.min';
+// import {$, jQuery} from '../../node_modules/jquery/dist/jquery.min';
 import { addValue } from '../actions/index'
 import { bindActionCreators } from 'redux';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -44,7 +44,7 @@ class Form extends Component {
             let onPhotoChange= (e)=>{
                 let val = e.target.value;
                 imgFile = e.target.files[0];
-                let valid = Validation.validatePhoto(photoField.value);
+                let valid = Validation.validatePhoto(imgFile);
                 this.props.dispatch(addValue('photo', e.target.files[0], valid));
             }
             let onGenderChange= (e)=>{
@@ -78,35 +78,41 @@ class Form extends Component {
             }
             if(valid && nameField.value && surNameField.value && emailField.value && photoField.value && genderField.value && ageField.value){
 
-
-
-
                 document.getElementById('btnGroup').classList.remove('errorMsg');
                 let user = this.props.user;
 
+
+                let form = document.getElementById('registerForm');
+
+                let userFormData = new FormData();
+                userFormData.append('name', user.name.value);
+                userFormData.append('surName', user.surName.value);
+                userFormData.append('email', user.email.value);
+                userFormData.append('photo', user.photo.value);
+                userFormData.append('gender', user.gender.value);
+                userFormData.append('age', user.age.value);
+                userFormData.append('middleName', user.middleName.value);
+
+
+
                 let sendUser = new XMLHttpRequest();
-
-                let userItem = JSON.stringify(user);
                 sendUser.open('POST', 'http://localhost:8000/addUser', true);
-                // sendUser.setRequestHeader('Content-Type', 'multipart/form-data');
-
-                sendUser.setRequestHeader('Content-Type', 'application/json');
-                sendUser.setRequestHeader('Content-Disposition', 'attachment; filename=user.photo.value.name ');
+                // sendUser.setRequestHeader('Content-Type', ' multipart/form-data');
 
                 sendUser.onreadystatechange = function () {
                     if (sendUser.readyState === 4) {
                         if (sendUser.status != 200) {
                             console.log(sendUser.status + ': ' + sendUser.statusText);
                         } else {
-
-                            let newUser = JSON.parse(sendUser.responseText);
+                            let newUser =sendUser.responseText;
                             console.log(newUser);
-
                         }
                     }
                 };
-
-                sendUser.send(userItem);
+                for (var [key, value] of userFormData.entries()) {
+                    console.log(key, value);
+                }
+                sendUser.send(userFormData);
 
 
 
@@ -125,7 +131,7 @@ class Form extends Component {
             const middleNameClassValid = this.props.user.middleName.isValid  ? 'form-control is-valid' : 'form-control is-invalid';
             return (
                 <div>
-                <form method='post' action = '/addUser' className = 'row d-flex flex-column col-sm-3' id='registerForm'>
+                <form  className = 'row d-flex flex-column col-sm-3' id='registerForm'>
         <div className='form-group'>
                 <label htmlFor ='name'>Enter your Name</label>
             <input  ref={node => nameField = node} className = {nameClassValid} type ='text' placeholder='John' id='name' onChange ={onNameChange}></input>
@@ -150,7 +156,7 @@ class Form extends Component {
             <div className='form-group'>
                 <label htmlFor ='photo'>Choose photo</label>
             <input  ref={node => photoField = node} className = {photoClassValid} type ='file' id='photo' onChange ={onPhotoChange} name = 'photo'></input>
-                <div className="invalid-feedback">Files formate only JPEG, JPG, PNG</div>
+                <div className="invalid-feedback">Files formate only JPEG, JPG, PNG (40kb - 5mb)</div>
             <small id="emailHelp" className="form-text text-muted">size between 40kb and 5mb</small>
             </div>
 
