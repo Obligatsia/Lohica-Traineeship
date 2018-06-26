@@ -32,43 +32,61 @@ const storage = multer.diskStorage({
         cb(null, 'server/usersImg')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now())
+        cb(null, Date.now()+'-'+file.originalname)
     }
 });
 const upload = multer({storage: storage});
 
-app.post('/addUser', upload.single('photo'), async (req, res, next) => {
-    MongoClient.connect('mongodb://localhost:27017/myDataBase', (err, client) => {
-        assert.equal(null, err);
-        insertDocuments(client, 'server/usersImg' + req.file.filename, () => {
-            const db = client.db('users');
-            client.close();
-        });
-    });
-
+app.post('/addUser', upload.single('photo'), (req, res, next) => {
     const user = req.body;
     const psw = Math.random().toString(36).slice(-8);
 
     try {
-        let newUser = new Users({name:user.name, surName: user.surName, photo: req.file.filename, email: user.email, gender: user.gender, age: user.age, middleName: user.middleName, password: psw});
-        newUser.save(function (err, user) {
-            if (err) return console.error(err);
-            console.log(user.name + " saved to users.");
+        Users.findOne({email: user.email }, (err, user)=>{
+            if(user){
+                res.send(200, 'emailError');
+            } else{
+                let nameValid = Validation.validateName(req.body.name);
+                let surNameValid = Validation.validateName(req.body.surName);
+                let emailValid = Validation.validateEmail(req.body.email);
+                let ageValid = Validation.validateAge(req.body.age);
+                let photoValid = Validation.validatePhoto(req.file.filename, req.file.size);
+                let middleNameValid = Validation.validateName(req.body.middleName);
+
+                if(nameValid && surNameValid && emailValid && ageValid && photoValid && middleNameValid) {
+                    let newUser = new Users({name:req.body.name, surName:req.body.surName, photo: { path: req.file.path, name: req.file.filename},  email: req.body.email, gender: req.body.gender, age: req.body.age, middleName: req.body.middleName, password: psw});
+
+                    newUser.photo.path = req.file.path;
+                    newUser.photo.name = req.file.filename;
+
+                    newUser.save(function (err, user) {
+                        if (err) return console.error(err);
+                        console.log(user.name + " saved to users.");
+                    });
+
+                    MongoClient.connect('mongodb://localhost:27017/myDataBase', (err, client) => {
+                        assert.equal(null, err);
+                        insertDocuments(client, 'server/usersImg' + req.file.originalname, () => {
+                            const db = client.db('users');
+                            client.close();
+                        });
+                    });
+
+                    res.send(200, newUser);
+
+                } else{
+                    let invalidMsg = {
+                        name: nameValid,
+                        surName: surNameValid,
+                        email: emailValid,
+                        photo: photoValid,
+                        age: ageValid,
+                        middleName: middleNameValid
+                    }
+                    res.send(200, invalidMsg);
+                }
+            }
         });
-
-        newUser.photo.data = req.file.path;
-        newUser.photo.name = req.file.filename;
-        newUser.photo.contentType = 'image/png';
-
-
-        newUser.name.isValid = await Validation.validateName(user.name.value);
-        newUser.surName.isValid = await Validation.validateName(user.surName.value);
-        newUser.email.isValid = await Validation.validateEmail(user.email.value);
-        newUser.age.isValid = await Validation.validateAge(user.age.value);
-        newUser.photo.isValid = await Validation.validatePhoto(newUser.photo.name);
-        newUser.middleName.isValid = await Validation.validateName(user.middleName.value);
-        res.send(200, newUser);
-
 
 
     } catch (err) {

@@ -1,5 +1,3 @@
-const React = require ('react');
-
 module.exports = class Validation {
     validateName (name){
       let pattern = /^[A-Za-z]{1,32}$/;
@@ -13,14 +11,13 @@ module.exports = class Validation {
         return result;
     }
 
-    validatePhoto(photo){
+    validatePhoto(name, size){
         let pattern;
-        if((photo.size>=40000)&&(photo.size<5e+6)) {
-           pattern = /^\S+\.\png|jpg|jpeg$/;
+        if((size>=40000)&&(size<5e+6)) {
+           pattern = /^\S+\.\jpg|png|jpeg$/;
         } else {
-            console.log(photo.size);
             return false};
-        let result = pattern.exec(photo.name);
+        let result = pattern.exec(name);
         return result;
     }
 

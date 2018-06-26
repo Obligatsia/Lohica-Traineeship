@@ -4,7 +4,7 @@ let userSchema = new mongoose.Schema({
     name: String,
     surName: String,
     email: String,
-    photo: { data: Buffer, contentType: String, name: String },
+    photo: {data: Buffer, name: String, path: String },
     gender: String,
     age: Number,
     middleName: String,

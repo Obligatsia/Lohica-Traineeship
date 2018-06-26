@@ -1,9 +1,8 @@
 import { combineReducers } from 'redux'
 import value from './Value'
-import visibilityFilter from './visibilityFilter'
-
+import welcomeUser from './WelcomeUser'
 
 export default combineReducers ({
   user: value,
-  visibilityFilter
+    welcome: welcomeUser,
 })

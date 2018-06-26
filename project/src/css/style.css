@@ -20,13 +20,22 @@ header img{
     position: relative;
 }
 .errorMsg:after{
-    content: 'Fill all fields';
+    content: 'Fill all fields correctly';
     display: block;
     color: red;
     position: absolute;
     left: 30%;
     top: 0;
 }
+.emailErrorMsg:after{
+    content: 'User with such email was already registered';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
+}
+
 #registerForm label:before{
     content: '*';
     color: red;
