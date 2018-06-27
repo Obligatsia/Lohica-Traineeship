@@ -1,12 +1,9 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { addValue } from '../actions/index'
-// import { welcomeUser } from '../actions/index'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { Redirect } from 'react-router'
 import {withRouter} from 'react-router-dom'
-import store from '../index.js';
-import { push } from 'react-router-redux';
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';

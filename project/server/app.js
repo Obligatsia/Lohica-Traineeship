@@ -10,6 +10,7 @@ const router = express.Router();
 const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
+const jwt = require('jsonwebtoken');
 
 const db = mongoose.connection;
 mongoose.connect('mongodb://localhost:27017/myDataBase', ((err)=>{
@@ -94,6 +95,50 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
     }
 
 });
+
+app.post('/sendAuthorizedUser', (req, res, next) => {
+    let authUser = req.body;
+    Users.findOne({email: authUser.email }, (err, user)=>{
+        if(!user){
+            res.send(200, 'invalidEmail');
+        } else if(user.password!==authUser.password){
+            res.send(200, 'invalidPsd');
+        } else{
+            jwt.sign({authUser}, 'secretkey', (err, token)=>{
+                res.send(200, token);
+            })
+        }
+    })
+})
+
+const verifyToken = ((req, res, next)=>{
+    const bearerHeader = req.headers['authorization'];
+    if(typeof bearerHeader!=='undefines'){
+        const bearer = bearerHeader.split(' ');
+        const bearerToken = bearer[1];
+        req.token = bearerToken;
+        next();
+
+    } else{
+        res.send (403);
+    }
+
+
+
+})
+
+
+app.post('/userPage', verifyToken, (req, res) => {
+    jwt.verify(req.token, 'secretkey',{expiresIn: '30s'}, (err, authData)=>{
+        if(err){
+            res.send(403);
+        } else{
+            res.send(200, authData);
+        }
+    })
+
+})
+
 const insertDocuments = function(client, filePath, callback) {
     const db = client.db('users');
 

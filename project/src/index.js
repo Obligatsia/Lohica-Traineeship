@@ -11,8 +11,9 @@ import './index.css';
 import rootReducer from './reducers/index';
 import App from './components/App.js';
 import WelcomePage from './components/WelcomePage.js';
-import logIn from './components/LogIn.js';
+import LogInPage from './components/LogInPage.js';
 import logOut from './components/LogOut.js';
+import UserPage from './components/UserPage.js';
 
 
 const store = createStore(rootReducer);
@@ -27,8 +28,9 @@ render(
     <div>
     <Route path="/register" component={App} />
 <Route path="/welcomePage" component={WelcomePage} />
-<Route path="/logIn" component={logIn} />
+<Route path="/logIn" component={LogInPage} />
 <Route path="/logOut" component={logOut} />
+<Route path="/userPage" component={UserPage} />
 </div>
 </BrowserRouter>
 

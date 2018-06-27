@@ -24,7 +24,7 @@ header img{
 /*====================================================================================*/
 
 
-#registerForm {
+#registerForm, #logInForm {
     margin: 0 auto;
     margin-top: 20px;
 }
@@ -68,9 +68,27 @@ header img{
     text-align: center;
 }
 .greetingMsg span{
-    text-decoration: underline;
     font-size: 20px;
 }
 .greetingMsg p{
     margin-bottom: 2px;
+}
+
+/*========================================================================*/
+
+.invalidPsdMsg:after{
+    content: 'Wrong password';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
+}
+.invalidEmailMsg:after{
+    content: 'User with such email is not registered';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
 }

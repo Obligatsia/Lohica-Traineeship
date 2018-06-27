@@ -1,10 +1,8 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
-import {withRouter} from 'react-router-dom'
+import {Link, withRouter} from 'react-router-dom'
 
-import { welcomeUser } from '../actions/index'
-import form from './Form.js'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 
@@ -19,6 +17,7 @@ const myRouterGreetingComponent = withRouter (class Greeting extends Component {
             <div className = 'greetingMsg'>
         <p>Welcome, {user.name} {user.surName}!</p>
         <p>Your password is <span>{user.password}</span></p>
+            <p>You can <Link to='/logIn'>Log in</Link> now.</p>
         </div>
     )
     }
