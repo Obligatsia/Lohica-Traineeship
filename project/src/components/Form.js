@@ -5,6 +5,7 @@ import { addValue } from '../actions/index'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { Redirect } from 'react-router'
 import {withRouter} from 'react-router-dom'
+import store from '../index.js';
 import { push } from 'react-router-redux';
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -15,12 +16,6 @@ const ValidationMethods = require ('../components/validationComponent.js');
 const Validation = new ValidationMethods();
 
 const myRouterComponent = withRouter (class Form extends Component {
-    constructor () {
-        super();
-        this.state = {
-            fireRedirect: false
-        }
-    }
 
     render(){
             let nameField;
@@ -115,25 +110,22 @@ const myRouterComponent = withRouter (class Form extends Component {
         let form = document.getElementById('registerForm');
 
         let onSubmitForm = (e)=>{
-const self = this;
+            let valid=[];
 
 
 
-            let valid;
             for (let name in this.props.user){
                 for(let isValid in this.props.user[name]){
                     let valueValidated = this.props.user[name].isValid;
                     if(!valueValidated){
-                        valid = 0;
-                    } else{
-                        valid=1;
+                        valid.push(this.props.user[name]);
                     }
                 }
             }
-            if(valid){
-
+            if(valid.length===0){
                 document.getElementById('btnGroup').classList.remove('errorMsg');
                 let user = this.props.user;
+                let self = this;
 
                 let userFormData = new FormData();
                 userFormData.append('name', user.name.value);
@@ -162,7 +154,8 @@ const self = this;
                                 for (var key in resText) {
                                     if(key==='password'){
                                         newUser = resText;
-                                        self.props.history.push('/welcomePage')
+                                        self.props.history.push('/welcomePage', newUser);
+
 
                                     } else if(resText[key]==='nameValid') {
                                         if(!resText[key]){
@@ -180,7 +173,6 @@ const self = this;
                                         }
                                     }
                                 }
-
                             };
 
                         }
@@ -192,7 +184,6 @@ const self = this;
                 let form = document.getElementById('registerForm');
                 document.getElementById('btnGroup').classList.add('errorMsg');
                 for(let i=0; i<form.elements.length-2; i++){
-                    console.log(form[form.elements.length-1]);
                     if(!form.elements[i].value){
                         form.elements[i].classList.add('is-invalid');
                     } else form.elements[i].classList.remove('is-invalid');

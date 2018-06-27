@@ -2,6 +2,7 @@ import React from 'react'
 import  '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import img from '../img/logo.png';
+import { Link} from 'react-router-dom';
 
 export default class Header extends React.Component{
   render(){
@@ -11,6 +12,11 @@ export default class Header extends React.Component{
       <img src={img} width="40" height="30" className ="d-inline-block align-top" alt=""></img>
       Social Network
       </a>
+      <ul>
+      <li><Link to='/logIn'>Log in</Link></li>
+      <li><Link to='/logOut'>Log out</Link></li>
+      </ul>
+          
       </nav>
 
 
