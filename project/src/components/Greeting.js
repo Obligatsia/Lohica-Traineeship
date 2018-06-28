@@ -5,6 +5,7 @@ import {Link, withRouter} from 'react-router-dom'
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
+import $ from 'jquery'
 
 
 const myRouterGreetingComponent = withRouter (class Greeting extends Component {
@@ -13,11 +14,16 @@ const myRouterGreetingComponent = withRouter (class Greeting extends Component {
         var user = this.props.location.state;
 
 
+        const onLinkClick = ((e)=>{
+            e.preventDefault();
+            this.props.history.push('/logIn', user);
+        })
+
         return (
             <div className = 'greetingMsg'>
         <p>Welcome, {user.name} {user.surName}!</p>
         <p>Your password is <span>{user.password}</span></p>
-            <p>You can <Link to='/logIn'>Log in</Link> now.</p>
+            <p>You can <a href = '#' onClick ={onLinkClick} id='logInLink'>Log in</a> now.</p>
         </div>
     )
     }

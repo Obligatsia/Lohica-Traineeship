@@ -1,29 +1,27 @@
+const {namePattern, emailPattern, photoPattern, agePattern} = require('../constants');
+
+
 module.exports = class Validation {
-    validateName (name){
-      let pattern = /^[A-Za-z]{1,32}$/;
-      let result = pattern.exec(name);
+    static validateName (name){
+      let result = namePattern.exec(name);
       return result;
     }
 
-    validateEmail(email){
-      let pattern = /^\S+@\S+\.\S+$/;
-      let result = pattern.exec(email);
+    static validateEmail(email){
+      let result = emailPattern.exec(email);
         return result;
     }
 
-    validatePhoto(name, size){
-        let pattern;
+    static validatePhoto(name, size){
         if((size>=40000)&&(size<5e+6)) {
-           pattern = /^\S+\.\jpg|png|jpeg$/;
+            let result = photoPattern.exec(name);
+            return result;
         } else {
             return false};
-        let result = pattern.exec(name);
-        return result;
     }
 
-    validateAge(age){
-      let pattern = /^([1-9]\d?)$/;
-      let result = pattern.exec(age);
+    static validateAge(age){
+      let result = agePattern.exec(age);
         return result;
     }
 

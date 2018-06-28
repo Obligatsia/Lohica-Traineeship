@@ -10,6 +10,7 @@ const UserBlockRouteComponent = withRouter(
     class UserBlock extends React.Component{
         render(){
             const user = this.props.location.state;
+            console.log(user);
 
             return(
                 <div>hi, {user.name}</div>

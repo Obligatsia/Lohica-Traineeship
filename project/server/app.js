@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const IsValid = require('../src/components/validationComponent');
+const Validation = require('../src/components/validationComponent');
 const mongoose = require('mongoose');
 const MongoClient = require('mongodb');
 const Schema = mongoose.Schema;
@@ -11,14 +11,15 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
+const {mongoConnect} = require('../src/constants');
+const {storage} = require('./storage');
+
 
 const db = mongoose.connection;
-mongoose.connect('mongodb://localhost:27017/myDataBase', ((err)=>{
+mongoose.connect(mongoConnect, ((err)=>{
     if (err) throw err;
     console.log('Successfully connected');
 }))
-
-const Validation = new IsValid();
 
 const app = express();
 app.use(cors());
@@ -28,33 +29,37 @@ app.use('/users', users);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'server/usersImg')
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now()+'-'+file.originalname)
-    }
-});
+
 const upload = multer({storage: storage});
+
+const generatePsd = (()=>{
+    return Math.random().toString(36).slice(-8);
+})
+
 
 app.post('/addUser', upload.single('photo'), (req, res, next) => {
     const user = req.body;
-    const psw = Math.random().toString(36).slice(-8);
-
+    const psw = generatePsd();
     try {
         Users.findOne({email: user.email }, (err, user)=>{
             if(user){
-                res.send(200, 'emailError');
-            } else{
+                console.log(req.body);
+                return res.send(200, 'emailError');
+            }
                 let nameValid = Validation.validateName(req.body.name);
                 let surNameValid = Validation.validateName(req.body.surName);
                 let emailValid = Validation.validateEmail(req.body.email);
                 let ageValid = Validation.validateAge(req.body.age);
                 let photoValid = Validation.validatePhoto(req.file.filename, req.file.size);
-                let middleNameValid = Validation.validateName(req.body.middleName);
+                let middleNameValid;
+                if(req.body.middleName){
+                    middleNameValid = Validation.validateName(req.body.middleName);
+                } else{
+                    middleNameValid = true;
+                }
+                const fieldsAreValid = nameValid && surNameValid && emailValid && ageValid && photoValid && middleNameValid;
 
-                if(nameValid && surNameValid && emailValid && ageValid && photoValid && middleNameValid) {
+                if(fieldsAreValid) {
                     let newUser = new Users({name:req.body.name, surName:req.body.surName, photo: { path: req.file.path, name: req.file.filename},  email: req.body.email, gender: req.body.gender, age: req.body.age, middleName: req.body.middleName, password: psw});
 
                     newUser.photo.path = req.file.path;
@@ -65,7 +70,7 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
                         console.log(user.name + " saved to users.");
                     });
 
-                    MongoClient.connect('mongodb://localhost:27017/myDataBase', (err, client) => {
+                    MongoClient.connect(mongoConnect, (err, client) => {
                         assert.equal(null, err);
                         insertDocuments(client, 'server/usersImg' + req.file.originalname, () => {
                             const db = client.db('users');
@@ -86,7 +91,6 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
                     }
                     res.send(200, invalidMsg);
                 }
-            }
         });
 
 
@@ -98,7 +102,8 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
 
 app.post('/sendAuthorizedUser', (req, res, next) => {
     let authUser = req.body;
-    Users.findOne({email: authUser.email }, (err, user)=>{
+
+    Users.findOne({email: authUser.email}, (err, user)=>{
         if(!user){
             res.send(200, 'invalidEmail');
         } else if(user.password!==authUser.password){
@@ -113,7 +118,7 @@ app.post('/sendAuthorizedUser', (req, res, next) => {
 
 const verifyToken = ((req, res, next)=>{
     const bearerHeader = req.headers['authorization'];
-    if(typeof bearerHeader!=='undefines'){
+    if(typeof bearerHeader!=='undefined'){
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
         req.token = bearerToken;
@@ -128,7 +133,7 @@ const verifyToken = ((req, res, next)=>{
 })
 
 
-app.post('/userPage', verifyToken, (req, res) => {
+app.post('/userPageUrl', verifyToken, (req, res) => {
     jwt.verify(req.token, 'secretkey',{expiresIn: '30s'}, (err, authData)=>{
         if(err){
             res.send(403);

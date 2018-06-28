@@ -4,13 +4,12 @@ import { addValue } from '../actions/index'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { Redirect } from 'react-router'
 import {withRouter} from 'react-router-dom'
+import $ from 'jquery'
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
-const ValidationMethods = require ('../components/validationComponent.js');
-
-
-const Validation = new ValidationMethods();
+const Validation = require ('../components/validationComponent.js');
+const {addUserUrl} = require('../constants');
 
 const myRouterComponent = withRouter (class Form extends Component {
 
@@ -94,9 +93,15 @@ const myRouterComponent = withRouter (class Form extends Component {
             }
             let onMiddleNameChange= (e)=>{
                 let val = e.target.value;
-                let valid = Validation.validateName(middleNameField.value);
+                let valid;
+                if(val){
+                    valid = Validation.validateName(middleNameField.value);
+                } else{
+                    valid = true;
+                }
+                console.log(valid);
                 this.props.dispatch(addValue('middleName', val, valid));
-                if(valid){
+                if(!val||valid){
                     e.target.classList.remove('is-invalid');
                     e.target.classList.add('is-valid');
                 } else{
@@ -109,8 +114,6 @@ const myRouterComponent = withRouter (class Form extends Component {
         let onSubmitForm = (e)=>{
             let valid=[];
 
-
-
             for (let name in this.props.user){
                 for(let isValid in this.props.user[name]){
                     let valueValidated = this.props.user[name].isValid;
@@ -119,7 +122,7 @@ const myRouterComponent = withRouter (class Form extends Component {
                     }
                 }
             }
-            if(valid.length===0){
+            if(!valid.length){
                 document.getElementById('btnGroup').classList.remove('errorMsg');
                 let user = this.props.user;
                 let self = this;
@@ -133,57 +136,51 @@ const myRouterComponent = withRouter (class Form extends Component {
                 userFormData.append('age', user.age.value);
                 userFormData.append('middleName', user.middleName.value);
 
-                let sendUser = new XMLHttpRequest();
-                sendUser.open('POST', 'http://localhost:8000/addUser', true);
 
-
-                sendUser.onreadystatechange = function () {
-                    if (sendUser.readyState === 4) {
-                        if (sendUser.status !== 200) {
-                            console.log(sendUser.status + ': ' + sendUser.statusText);
+                $.ajax({
+                    url: addUserUrl,
+                    method: 'POST',
+                    data: userFormData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data){
+                        if(data ==='emailError'){
+                            $('#btnGroup').removeClass('errorMsg');
+                            $('#btnGroup').addClass('emailErrorMsg');
                         } else {
-                            let resText =sendUser.responseText;
-                            if(resText ==='emailError'){
-                                document.getElementById('btnGroup').classList.remove('errorMsg');
-                                document.getElementById('btnGroup').classList.add('emailErrorMsg');
-                            } else {
-                                resText = JSON.parse(resText);
-                                for (var key in resText) {
-                                    if(key==='password'){
-                                        newUser = resText;
-                                        self.props.history.push('/welcomePage', newUser);
-
-
-                                    } else if(resText[key]==='nameValid') {
-                                        if(!resText[key]){
-                                            let form = document.getElementById('registerForm');
-                                            for(let i=0; i<form.elements.length; i++){
-                                                if(key===form.elements[i].id){
-                                                    form.elements[i].classList.add('is-invalid');
-                                                    form.elements[i].classList.remove('is-valid');
-                                                } else {
-                                                    form.elements[i].classList.remove('is-invalid');
-                                                    form.elements[i].classList.add('is-valid');
-                                                }
+                            let resText = data;
+                            for (let key in resText) {
+                                if(key==='password'){
+                                    newUser = resText;
+                                    console.log(newUser);
+                                    self.props.history.push('/welcomePage', newUser);
+                                } else if(resText[key]==='nameValid') {
+                                    if(!resText[key]){
+                                        for(let i=0; i<form.elements.length; i++){
+                                            if(key===form.elements[i].id){
+                                                form.elements[i].classList.add('is-invalid');
+                                                form.elements[i].classList.remove('is-valid');
+                                            } else {
+                                                form.elements[i].classList.remove('is-invalid');
+                                                form.elements[i].classList.add('is-valid');
                                             }
-
                                         }
                                     }
                                 }
-                            };
-
+                            }
                         }
-                    }
-                };
-                sendUser.send(userFormData);
-
+                    },
+                    error: ((data)=>{
+                        console.log(data.status + ': ' + data.statusText);
+                    })
+                });
             } else{
                 let form = document.getElementById('registerForm');
-                document.getElementById('btnGroup').classList.add('errorMsg');
+                $('#btnGroup').addClass('errorMsg');
                 for(let i=0; i<form.elements.length-2; i++){
                     if(!form.elements[i].value){
                         form.elements[i].classList.add('is-invalid');
-                    } else form.elements[i].classList.remove('is-invalid');
+                    }
                 }
             }
         };

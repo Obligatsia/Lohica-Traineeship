@@ -1,10 +1,13 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import {withRouter} from 'react-router-dom'
+import $ from 'jquery'
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import {addValue} from "../actions";
+const {sendAuthUserUrl} = require('../constants');
+
 
 const LogInRouterComponent = withRouter(
     class LogInForm extends Component {
@@ -12,6 +15,9 @@ const LogInRouterComponent = withRouter(
             let emailField;
             let psdField;
             let logInBtn;
+
+            var user = this.props.location.state;
+            var userToChange = this.props.user;
 
             let onEmailChange= (e)=>{
                 let val = e.target.value;
@@ -22,23 +28,22 @@ const LogInRouterComponent = withRouter(
             let onPsdChange= (e)=>{
                 let val = e.target.value;
                 let valid;
-                this.props.dispatch(addValue('psd', val, valid));
+                this.props.dispatch(addValue('password', val, valid));
             }
 
             let form = document.getElementById('logInForm');
             let onLogIn = (e)=>{
                 const self = this;
 
-                let user = this.props.user;
                 let userInfo = {
-                    name: this.props.user.name.value,
-                    surName: this.props.user.surName.value,
-                    email: this.props.user.email.value,
-                    photo: this.props.user.photo.value,
-                    gender: this.props.user.gender.value,
-                    age: this.props.user.age.value,
-                    middleName: this.props.user.middleName.value,
-                    password: this.props.user.psd.value,
+                    name: user.name,
+                    surName: user.surName,
+                    email: user.email,
+                    photo: user.photo,
+                    gender: user.gender,
+                    age: user.age,
+                    middleName: user.middleName,
+                    password:user.password,
                 };
 
                 if(!emailField.value||!psdField.value){
@@ -48,42 +53,38 @@ const LogInRouterComponent = withRouter(
                 } else{
                     document.getElementById('btnGroup').classList.remove('errorMsg');
 
-                    let authorizedUser = {email: user.email.value, password: user.psd.value};
+                    let authorizedUser = {email: userToChange.email.value, password: userToChange.password.value};
                     let jsonAuthUser = JSON.stringify(authorizedUser);
+                    console.log(jsonAuthUser);
+                    $.ajax({
+                        url: sendAuthUserUrl,
+                        method: 'POST',
+                        data: jsonAuthUser,
+                        contentType: 'application/json; charset=utf-8',
+                        success: function(data){
+                            console.log(data);
 
-                    let sendAuthorizedUser = new XMLHttpRequest();
-                    sendAuthorizedUser.open('POST', 'http://localhost:8000/sendAuthorizedUser', true);
-                    sendAuthorizedUser.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-                    // sendAuthorizedUser.setRequestHeader('Authorization', 'bearer ' + getToken())
+                            if(data==='invalidPsd'){
+                                document.getElementById('btnGroup').classList.remove('errorMsg');
+                                document.getElementById('btnGroup').classList.add('invalidPsdMsg');
+                                document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
 
-                    sendAuthorizedUser.onreadystatechange = function () {
-                        if (sendAuthorizedUser.readyState === 4) {
-                            if (sendAuthorizedUser.status !== 200) {
-                                console.log(sendAuthorizedUser.status + ': ' + sendAuthorizedUser.statusText);
-                            } else {
-                                let resText =sendAuthorizedUser.responseText;
-
-                                if(resText==='invalidPsd'){
-                                    document.getElementById('btnGroup').classList.remove('errorMsg');
-                                    document.getElementById('btnGroup').classList.add('invalidPsdMsg');
-                                    document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
-
-                                } else if(resText==='invalidEmail') {
-                                    document.getElementById('btnGroup').classList.remove('errorMsg');
-                                    document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
-                                    document.getElementById('btnGroup').classList.add('invalidEmailMsg');
-                                } else{
-                                    document.getElementById('btnGroup').classList.remove('errorMsg');
-                                    document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
-                                    document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
-                                    console.log(resText);
-                                    self.props.history.push('/userPage', userInfo);
-
-                                }
+                            } else if(data==='invalidEmail') {
+                                document.getElementById('btnGroup').classList.remove('errorMsg');
+                                document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
+                                document.getElementById('btnGroup').classList.add('invalidEmailMsg');
+                            } else{
+                                document.getElementById('btnGroup').classList.remove('errorMsg');
+                                document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
+                                document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
+                                self.props.history.push('/userPage', userInfo);
                             }
-                        }
-                    };
-                    sendAuthorizedUser.send(jsonAuthUser);
+                        },
+                        // beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + tokenString ) },
+                        error: ((data)=>{
+                            console.log(data.status + ': ' + data.statusText);
+                        })
+                    })
                 }
             };
 
