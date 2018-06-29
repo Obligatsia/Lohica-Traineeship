@@ -9,11 +9,11 @@ import '../css/style.css';
 const UserBlockRouteComponent = withRouter(
     class UserBlock extends React.Component{
         render(){
-            const user = this.props.location.state;
-            console.log(user);
 
+            const user = this.props.user;
+            console.log(user);
             return(
-                <div>hi, {user.name}</div>
+                <div>hi, {user.name.value}</div>
         )
         }
     }
@@ -21,6 +21,7 @@ const UserBlockRouteComponent = withRouter(
 
 function mapStateToProps(state) {
     return {
+        user: state.user
     };
 }
 

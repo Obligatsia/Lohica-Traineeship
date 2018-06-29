@@ -14,10 +14,8 @@ const LogInRouterComponent = withRouter(
         render(){
             let emailField;
             let psdField;
-            let logInBtn;
 
-            var user = this.props.location.state;
-            var userToChange = this.props.user;
+            var user = this.props.user;
 
             let onEmailChange= (e)=>{
                 let val = e.target.value;
@@ -35,17 +33,6 @@ const LogInRouterComponent = withRouter(
             let onLogIn = (e)=>{
                 const self = this;
 
-                let userInfo = {
-                    name: user.name,
-                    surName: user.surName,
-                    email: user.email,
-                    photo: user.photo,
-                    gender: user.gender,
-                    age: user.age,
-                    middleName: user.middleName,
-                    password:user.password,
-                };
-
                 if(!emailField.value||!psdField.value){
                     document.getElementById('btnGroup').classList.add('errorMsg');
                     document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
@@ -53,7 +40,8 @@ const LogInRouterComponent = withRouter(
                 } else{
                     document.getElementById('btnGroup').classList.remove('errorMsg');
 
-                    let authorizedUser = {email: userToChange.email.value, password: userToChange.password.value};
+                    let authorizedUser = {email: user.email.value, password: user.password.value};
+
                     let jsonAuthUser = JSON.stringify(authorizedUser);
                     console.log(jsonAuthUser);
                     $.ajax({
@@ -62,7 +50,7 @@ const LogInRouterComponent = withRouter(
                         data: jsonAuthUser,
                         contentType: 'application/json; charset=utf-8',
                         success: function(data){
-                            console.log(data);
+                            console.log( data);
 
                             if(data==='invalidPsd'){
                                 document.getElementById('btnGroup').classList.remove('errorMsg');
@@ -77,10 +65,9 @@ const LogInRouterComponent = withRouter(
                                 document.getElementById('btnGroup').classList.remove('errorMsg');
                                 document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
                                 document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
-                                self.props.history.push('/userPage', userInfo);
+                                self.props.history.push('/userPage');
                             }
                         },
-                        // beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + tokenString ) },
                         error: ((data)=>{
                             console.log(data.status + ': ' + data.statusText);
                         })
@@ -102,7 +89,7 @@ const LogInRouterComponent = withRouter(
                 <div className="invalid-feedback">Please, enter correct password</div>
             </div>
             <div className='form-group' id='btnGroup'>
-                <input type ='button' ref={node => logInBtn = node} className='btn btn-primary' id='logInBtn' onClick = {onLogIn} value='Log In'></input>
+                <input type ='button' className='btn btn-primary' onClick = {onLogIn} value='Log In'></input>
                 </div>
                 </form>
                 </div>

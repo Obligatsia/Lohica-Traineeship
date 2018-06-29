@@ -4,7 +4,7 @@ import '../css/style.css';
 import img from '../img/logo.png';
 import { Link} from 'react-router-dom';
 
-export default class Header extends React.Component{
+export default class HeaderLogIn extends React.Component{
   render(){
     return <header>
     <nav className="navbar navbar-light bg-faded">
@@ -14,12 +14,8 @@ export default class Header extends React.Component{
       </a>
       <ul>
       <li><Link to='/logIn'>Log in</Link></li>
-      <li><Link to='/logOut'>Log out</Link></li>
       </ul>
-          
       </nav>
-
-
     </header>
   }
 };

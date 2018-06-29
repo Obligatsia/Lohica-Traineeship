@@ -1,12 +1,11 @@
 import React from 'react'
-import Header from './Header'
+import Header from './HeaderLogOut'
 import UserBlock from './UserBlock'
 
 const UserPage = () => (
     <div>
     <Header />
     <UserBlock />
-
     </div>
 )
 

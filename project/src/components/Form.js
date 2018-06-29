@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { addValue } from '../actions/index'
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
-import { Redirect } from 'react-router'
 import {withRouter} from 'react-router-dom'
 import $ from 'jquery'
 
@@ -17,13 +15,9 @@ const myRouterComponent = withRouter (class Form extends Component {
             let nameField;
             let surNameField;
             let emailField;
-            let photoField;
-            let genderField;
             let ageField;
             let middleNameField;
-            let submitBtn;
         let imgFile;
-        let newUser;
 
         let onNameChange= (e)=>{
                 let val = e.target.value;
@@ -62,7 +56,6 @@ const myRouterComponent = withRouter (class Form extends Component {
                 }
             }
             let onPhotoChange= (e)=>{
-                let val = e.target.value;
                 imgFile = e.target.files[0];
                 let valid = Validation.validatePhoto(imgFile.name, imgFile.size);
                 this.props.dispatch(addValue('photo', e.target.files[0], valid));
@@ -151,9 +144,8 @@ const myRouterComponent = withRouter (class Form extends Component {
                             let resText = data;
                             for (let key in resText) {
                                 if(key==='password'){
-                                    newUser = resText;
-                                    console.log(newUser);
-                                    self.props.history.push('/welcomePage', newUser);
+                                    self.props.dispatch(addValue('password', resText.password, true));
+                                    self.props.history.push('/welcomePage');
                                 } else if(resText[key]==='nameValid') {
                                     if(!resText[key]){
                                         for(let i=0; i<form.elements.length; i++){
@@ -210,14 +202,14 @@ const myRouterComponent = withRouter (class Form extends Component {
 
             <div className='form-group'>
                 <label htmlFor ='photo'>Choose photo</label>
-            <input  ref={node => photoField = node} className = 'form-control' type ='file' id='photo' onChange ={onPhotoChange} name = 'photo'></input>
+            <input  className = 'form-control' type ='file' id='photo' onChange ={onPhotoChange} name = 'photo'></input>
                 <div className="invalid-feedback">Files formate only JPEG, JPG, PNG (40kb - 5mb)</div>
             <small id="emailHelp" className="form-text text-muted">size between 40kb and 5mb</small>
             </div>
 
             <div className='form-group'>
                 <label htmlFor='gender'>Select your gender</label>
-            <select  ref={node => genderField = node} className = 'form-control' id='gender' onChange ={onGenderChange}>
+            <select  className = 'form-control' id='gender' onChange ={onGenderChange}>
                 <option value = 'male'>Male</option>
                 <option value = 'female'>Female</option>
                 </select>
@@ -236,7 +228,7 @@ const myRouterComponent = withRouter (class Form extends Component {
             </div>
 
             <div className='form-group' id='btnGroup'>
-                <input type ='button' ref={node => submitBtn = node} className='btn btn-primary' id='submitBtn' onClick = {onSubmitForm} value='Save'></input>
+                <input type ='button' className='btn btn-primary' onClick = {onSubmitForm} value='Save'></input>
             </div>
             </form>
             </div>

@@ -109,7 +109,7 @@ app.post('/sendAuthorizedUser', (req, res, next) => {
         } else if(user.password!==authUser.password){
             res.send(200, 'invalidPsd');
         } else{
-            jwt.sign({authUser}, 'secretkey', (err, token)=>{
+            jwt.sign({authUser}, 'secretkey', {expiresIn: '30s'},(err, token)=>{
                 res.send(200, token);
             })
         }
@@ -123,18 +123,14 @@ const verifyToken = ((req, res, next)=>{
         const bearerToken = bearer[1];
         req.token = bearerToken;
         next();
-
     } else{
         res.send (403);
     }
-
-
-
 })
 
 
-app.post('/userPageUrl', verifyToken, (req, res) => {
-    jwt.verify(req.token, 'secretkey',{expiresIn: '30s'}, (err, authData)=>{
+app.post('/usersFriends', verifyToken, (req, res) => {
+    jwt.verify(req.token, 'secretkey', (err, authData)=>{
         if(err){
             res.send(403);
         } else{

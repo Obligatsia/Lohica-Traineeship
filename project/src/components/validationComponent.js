@@ -17,7 +17,8 @@ module.exports = class Validation {
             let result = photoPattern.exec(name);
             return result;
         } else {
-            return false};
+            return false
+        }
     }
 
     static validateAge(age){
