@@ -4,9 +4,3 @@ export const addValue = (name, text, isValid) => ({
     id: nextValueId++,
     payload:{name, value: text, isValid: isValid}
 })
-
-export const welcomeUser = (name, password) => ({
-    type: 'WELCOME_USER',
-    // id: nextValueId++,
-    payload:{name, password}
-})

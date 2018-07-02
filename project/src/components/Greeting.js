@@ -7,24 +7,21 @@ import '../css/style.css';
 
 const myRouterGreetingComponent = withRouter (class Greeting extends Component {
 
+    onClick=(e)=>{
+        e.preventDefault();
+        this.props.history.push('/logIn');
+    }
+
     render(){
         const user = this.props.user;
-
-        const onLinkClick = ((e)=>{
-            e.preventDefault();
-            this.props.history.push('/logIn');
-        })
-
         return (
             <div className = 'greetingMsg'>
         <p>Welcome, {user.name.value} {user.surName.value}!</p>
         <p>Your password is <span>{user.password.value}</span></p>
-            <p>You can <a href = '#' onClick ={onLinkClick} id='logInLink'>Log in</a> now.</p>
+            <p>You can <a href = '#' onClick ={(e)=>{this.onClick(e)}} id='logInLink'>Log in</a> now.</p>
         </div>
     )
     }
-
-
 })
 
 function mapStateToProps(state) {

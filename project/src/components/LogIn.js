@@ -7,89 +7,69 @@ import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import {addValue} from "../actions";
 const {sendAuthUserUrl} = require('../constants');
+const SendRequest = require ('../components/Requests.js');
 
 
 const LogInRouterComponent = withRouter(
     class LogInForm extends Component {
+        toggleClasses=(btnGroup, classOne, classTwo, classThree, classFour)=>{
+        $(btnGroup).removeClass(classOne);
+        $(btnGroup).addClass(classTwo);
+        $(btnGroup).removeClass(classThree);
+        $(btnGroup).removeClass(classFour);
+    }
+
+        successFunc(newData, btnGroup, props, toggleClasses){
+            props.dispatch(addValue('token', newData, true));
+            if(newData==='invalidPsd'){
+                toggleClasses(btnGroup, 'errorMsg', 'invalidPsdMsg', 'invalidEmailMsg', null )
+            } else if(newData==='invalidEmail') {
+                console.log('invalid');
+                toggleClasses(btnGroup, 'errorMsg', 'invalidEmailMsg', 'invalidPsdMsg', null )
+            } else{
+                toggleClasses(btnGroup, 'errorMsg', null, 'invalidEmailMsg', 'invalidPsdMsg')
+                props.history.push('/userPage');
+            }
+        }
+
+        onChange= (e, field, name)=>{
+            let val = e.target.value;
+            let valid;
+            this.props.dispatch(addValue(name, val, valid));
+        }
+
+        onClick = (e, emailField, psdField, user)=>{
+                if(!emailField.value||!psdField.value){
+                    this.toggleClasses($('#btnGroup'), 'invalidPsdMsg', 'errorMsg', 'invalidEmailMsg', null )
+                } else{
+                    $('#btnGroup').removeClass('errorMsg');
+                    let authorizedUser = {email: user.email.value, password: user.password.value};
+                    let jsonAuthUser = JSON.stringify(authorizedUser);
+                    SendRequest.sendForLogIn(sendAuthUserUrl, 'POST', jsonAuthUser, this.successFunc, $('#btnGroup'), this.props, this.toggleClasses);
+                }
+        }
+
         render(){
             let emailField;
             let psdField;
-
-            var user = this.props.user;
-
-            let onEmailChange= (e)=>{
-                let val = e.target.value;
-                let valid;
-                this.props.dispatch(addValue('email', val, valid));
-            }
-
-            let onPsdChange= (e)=>{
-                let val = e.target.value;
-                let valid;
-                this.props.dispatch(addValue('password', val, valid));
-            }
-
+            const user = this.props.user;
             let form = document.getElementById('logInForm');
-            let onLogIn = (e)=>{
-                const self = this;
-
-                if(!emailField.value||!psdField.value){
-                    document.getElementById('btnGroup').classList.add('errorMsg');
-                    document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
-                    document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
-                } else{
-                    document.getElementById('btnGroup').classList.remove('errorMsg');
-
-                    let authorizedUser = {email: user.email.value, password: user.password.value};
-
-                    let jsonAuthUser = JSON.stringify(authorizedUser);
-                    console.log(jsonAuthUser);
-                    $.ajax({
-                        url: sendAuthUserUrl,
-                        method: 'POST',
-                        data: jsonAuthUser,
-                        contentType: 'application/json; charset=utf-8',
-                        success: function(data){
-                            console.log( data);
-
-                            if(data==='invalidPsd'){
-                                document.getElementById('btnGroup').classList.remove('errorMsg');
-                                document.getElementById('btnGroup').classList.add('invalidPsdMsg');
-                                document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
-
-                            } else if(data==='invalidEmail') {
-                                document.getElementById('btnGroup').classList.remove('errorMsg');
-                                document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
-                                document.getElementById('btnGroup').classList.add('invalidEmailMsg');
-                            } else{
-                                document.getElementById('btnGroup').classList.remove('errorMsg');
-                                document.getElementById('btnGroup').classList.remove('invalidPsdMsg');
-                                document.getElementById('btnGroup').classList.remove('invalidEmailMsg');
-                                self.props.history.push('/userPage');
-                            }
-                        },
-                        error: ((data)=>{
-                            console.log(data.status + ': ' + data.statusText);
-                        })
-                    })
-                }
-            };
 
             return(
                 <div>
                 <form  className = 'row d-flex flex-column col-sm-3' id='logInForm'>
                 <div className='form-group'>
                 <label htmlFor ='email'>Enter your e-mail</label>
-            <input  ref={node => emailField = node} className = 'form-control' type ='text' placeholder='email here' id='email' onChange ={onEmailChange}></input>
+            <input  ref={node => emailField = node} className = 'form-control' type ='text' placeholder='email here' id='email' onChange ={(e)=>{this.onChange(e, emailField, 'email')}}></input>
                 <div className="invalid-feedback">Please, enter correct email</div>
             </div>
             <div className='form-group'>
                 <label htmlFor ='psd'>Enter your password</label>
-            <input  ref={node => psdField = node} className = 'form-control' type ='password' placeholder='password here' id='psd' onChange ={onPsdChange}></input>
+            <input  ref={node => psdField = node} className = 'form-control' type ='password' placeholder='password here' id='psd' onChange ={(e)=>{this.onChange(e, psdField, 'password')}}></input>
                 <div className="invalid-feedback">Please, enter correct password</div>
             </div>
             <div className='form-group' id='btnGroup'>
-                <input type ='button' className='btn btn-primary' onClick = {onLogIn} value='Log In'></input>
+                <input type ='button' className='btn btn-primary' onClick ={(e)=>{this.onClick(e,emailField, psdField, user)}} value='Log In'></input>
                 </div>
                 </form>
                 </div>

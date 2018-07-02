@@ -13,6 +13,7 @@ const assert = require('assert');
 const jwt = require('jsonwebtoken');
 const {mongoConnect} = require('../src/constants');
 const {storage} = require('./storage');
+const {timeToExpire} = require('./../src/constants');
 
 
 const db = mongoose.connection;
@@ -40,36 +41,40 @@ const generatePsd = (()=>{
 app.post('/addUser', upload.single('photo'), (req, res, next) => {
     const user = req.body;
     const psw = generatePsd();
+    let nameValid, surNameValid, emailValid, ageValid, photoValid, middleNameValid;
+    let ValidChecker = ((user)=>{
+        nameValid = Validation.validateName(user.name);
+        surNameValid = Validation.validateName(user.surName);
+        emailValid = Validation.validateEmail(user.email);
+        ageValid = Validation.validateAge(user.age);
+        photoValid = Validation.validatePhoto(req.file.filename, req.file.size);
+        middleNameValid;
+        middleNameValid = user.middleName?Validation.validateName(user.middleName):true;
+
+        return fieldsAreValid = nameValid && surNameValid && emailValid && ageValid && photoValid && middleNameValid;
+    })
+
+    let newUser = new Users({name:user.name, surName:user.surName, photo: { path: req.file.path, name: req.file.filename},  email: user.email, gender: user.gender, age: user.age, middleName: user.middleName, password: psw});
+    newUser.photo.path = req.file.path;
+    newUser.photo.name = req.file.filename;
+    let invalidMsg = {
+        name: nameValid,
+        surName: surNameValid,
+        email: emailValid,
+        photo: photoValid,
+        age: ageValid,
+        middleName: middleNameValid
+    }
     try {
-        Users.findOne({email: user.email }, (err, user)=>{
-            if(user){
-                console.log(req.body);
+        Users.findOne({email: user.email }, (err, userItem)=>{
+            if(userItem){
                 return res.send(200, 'emailError');
             }
-                let nameValid = Validation.validateName(req.body.name);
-                let surNameValid = Validation.validateName(req.body.surName);
-                let emailValid = Validation.validateEmail(req.body.email);
-                let ageValid = Validation.validateAge(req.body.age);
-                let photoValid = Validation.validatePhoto(req.file.filename, req.file.size);
-                let middleNameValid;
-                if(req.body.middleName){
-                    middleNameValid = Validation.validateName(req.body.middleName);
-                } else{
-                    middleNameValid = true;
-                }
-                const fieldsAreValid = nameValid && surNameValid && emailValid && ageValid && photoValid && middleNameValid;
-
-                if(fieldsAreValid) {
-                    let newUser = new Users({name:req.body.name, surName:req.body.surName, photo: { path: req.file.path, name: req.file.filename},  email: req.body.email, gender: req.body.gender, age: req.body.age, middleName: req.body.middleName, password: psw});
-
-                    newUser.photo.path = req.file.path;
-                    newUser.photo.name = req.file.filename;
-
-                    newUser.save(function (err, user) {
+            if(ValidChecker(user)) {
+                    newUser.save(function (err, userItem) {
                         if (err) return console.error(err);
-                        console.log(user.name + " saved to users.");
+                        console.log(userItem.name + " saved to users.");
                     });
-
                     MongoClient.connect(mongoConnect, (err, client) => {
                         assert.equal(null, err);
                         insertDocuments(client, 'server/usersImg' + req.file.originalname, () => {
@@ -77,27 +82,14 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
                             client.close();
                         });
                     });
-
                     res.send(200, newUser);
-
                 } else{
-                    let invalidMsg = {
-                        name: nameValid,
-                        surName: surNameValid,
-                        email: emailValid,
-                        photo: photoValid,
-                        age: ageValid,
-                        middleName: middleNameValid
-                    }
                     res.send(200, invalidMsg);
                 }
         });
-
-
     } catch (err) {
         console.log(err)
     }
-
 });
 
 app.post('/sendAuthorizedUser', (req, res, next) => {
@@ -109,7 +101,7 @@ app.post('/sendAuthorizedUser', (req, res, next) => {
         } else if(user.password!==authUser.password){
             res.send(200, 'invalidPsd');
         } else{
-            jwt.sign({authUser}, 'secretkey', {expiresIn: '30s'},(err, token)=>{
+            jwt.sign({authUser}, 'secretkey', {expiresIn: timeToExpire},(err, token)=>{
                 res.send(200, token);
             })
         }

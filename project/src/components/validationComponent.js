@@ -1,4 +1,4 @@
-const {namePattern, emailPattern, photoPattern, agePattern} = require('../constants');
+const {namePattern, emailPattern, photoPattern, agePattern, minSize, maxSize} = require('../constants');
 
 
 module.exports = class Validation {
@@ -13,7 +13,7 @@ module.exports = class Validation {
     }
 
     static validatePhoto(name, size){
-        if((size>=40000)&&(size<5e+6)) {
+        if((size>=minSize)&&(size<maxSize)) {
             let result = photoPattern.exec(name);
             return result;
         } else {
