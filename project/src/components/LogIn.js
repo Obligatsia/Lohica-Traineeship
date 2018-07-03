@@ -6,46 +6,52 @@ import $ from 'jquery'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import {addValue} from "../actions";
-const {sendAuthUserUrl} = require('../constants');
+const {sendAuthUserUrl, main} = require('../constants');
 const SendRequest = require ('../components/Requests.js');
 
 
 const LogInRouterComponent = withRouter(
     class LogInForm extends Component {
-        toggleClasses=(btnGroup, classOne, classTwo, classThree, classFour)=>{
+        toggleClasses(btnGroup, classOne, classTwo, classThree, classFour){
         $(btnGroup).removeClass(classOne);
         $(btnGroup).addClass(classTwo);
         $(btnGroup).removeClass(classThree);
         $(btnGroup).removeClass(classFour);
     }
 
-        successFunc(newData, btnGroup, props, toggleClasses){
-            props.dispatch(addValue('token', newData, true));
+    saveToLocalStorage (user){
+            let jsonUser = JSON.stringify(user);
+            localStorage.setItem('user', jsonUser);
+    }
+
+        successFunc(newData, btnGroup, props, toggleClasses, user, saveToLocalStorage){
+            props.dispatch(addValue('token', newData.token, true));
             if(newData==='invalidPsd'){
                 toggleClasses(btnGroup, 'errorMsg', 'invalidPsdMsg', 'invalidEmailMsg', null )
             } else if(newData==='invalidEmail') {
-                console.log('invalid');
                 toggleClasses(btnGroup, 'errorMsg', 'invalidEmailMsg', 'invalidPsdMsg', null )
             } else{
                 toggleClasses(btnGroup, 'errorMsg', null, 'invalidEmailMsg', 'invalidPsdMsg')
-                props.history.push('/userPage');
+                props.history.push(main);
+                newData.user.token = newData.token;
+                saveToLocalStorage(newData.user);
             }
         }
 
-        onChange= (e, field, name)=>{
+        onChange(e, field, name){
             let val = e.target.value;
             let valid;
             this.props.dispatch(addValue(name, val, valid));
         }
 
-        onClick = (e, emailField, psdField, user)=>{
+        onClick (e, emailField, psdField, user){
                 if(!emailField.value||!psdField.value){
                     this.toggleClasses($('#btnGroup'), 'invalidPsdMsg', 'errorMsg', 'invalidEmailMsg', null )
                 } else{
                     $('#btnGroup').removeClass('errorMsg');
                     let authorizedUser = {email: user.email.value, password: user.password.value};
                     let jsonAuthUser = JSON.stringify(authorizedUser);
-                    SendRequest.sendForLogIn(sendAuthUserUrl, 'POST', jsonAuthUser, this.successFunc, $('#btnGroup'), this.props, this.toggleClasses);
+                    SendRequest.sendForLogIn(sendAuthUserUrl, 'POST', jsonAuthUser, this.successFunc, $('#btnGroup'), this.props, this.toggleClasses, user, this.saveToLocalStorage);
                 }
         }
 

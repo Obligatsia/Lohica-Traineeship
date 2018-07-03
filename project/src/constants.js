@@ -12,7 +12,18 @@ const photoPattern = /^\S+\.\jpg|png|jpeg$/;
 const agePattern = /^([1-9]\d?)$/;
 const minSize = 40000;
 const maxSize = 5e+6;
-const timeToExpire = '30s';
+const timeToExpire = '24h';
+const secretKey = 'somesecretkey';
+const main = '/main';
+const welcomePage = '/welcomePage';
+const logIn = '/logIn';
+const friends = '/friends';
+const search = '/search';
+const settings = '/settings';
+const news = '/news';
+const addUsers = '/addUser';
+const imgPath = 'public/usersImg';
+const sendAuthorizesUser = '/sendAuthorizedUser';
 
 
 module.exports = {
@@ -30,5 +41,18 @@ module.exports = {
     onClickFriends,
     minSize,
     maxSize,
-    timeToExpire
+    timeToExpire,
+    secretKey,
+    main,
+    welcomePage,
+    logIn,
+    friends,
+    news,
+    settings,
+    search,
+    addUsers,
+    imgPath,
+    sendAuthorizesUser
+
+
 }

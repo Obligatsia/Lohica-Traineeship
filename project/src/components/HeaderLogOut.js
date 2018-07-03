@@ -3,6 +3,7 @@ import  '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import img from '../img/logo.png';
 import { Link} from 'react-router-dom';
+import {logIn} from '../constants'
 
 export default class HeaderLogOut extends React.Component{
     render(){
@@ -13,7 +14,7 @@ export default class HeaderLogOut extends React.Component{
         Social Network
         </a>
         <ul>
-        <li><Link to='/logIn'>Log out</Link></li>
+        <li><Link to={logIn}>Log out</Link></li>
         </ul>
         </nav>
         </header>

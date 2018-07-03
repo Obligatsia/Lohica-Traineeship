@@ -11,9 +11,10 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const {mongoConnect} = require('../src/constants');
+const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news} = require('../src/constants');
 const {storage} = require('./storage');
-const {timeToExpire} = require('./../src/constants');
+const randtoken = require('rand-token');
+
 
 
 const db = mongoose.connection;
@@ -25,11 +26,12 @@ mongoose.connect(mongoConnect, ((err)=>{
 const app = express();
 app.use(cors());
 
-app.use('/users', users);
+// app.use('/users', users);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const refreshTokens = {}
 
 const upload = multer({storage: storage});
 
@@ -38,7 +40,7 @@ const generatePsd = (()=>{
 })
 
 
-app.post('/addUser', upload.single('photo'), (req, res, next) => {
+app.post(addUsers, upload.single('photo'), (req, res, next) => {
     const user = req.body;
     const psw = generatePsd();
     let nameValid, surNameValid, emailValid, ageValid, photoValid, middleNameValid;
@@ -47,7 +49,8 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
         surNameValid = Validation.validateName(user.surName);
         emailValid = Validation.validateEmail(user.email);
         ageValid = Validation.validateAge(user.age);
-        photoValid = Validation.validatePhoto(req.file.filename, req.file.size);
+        photoValid = Validation.validatePhoto(req.file);
+
         middleNameValid;
         middleNameValid = user.middleName?Validation.validateName(user.middleName):true;
 
@@ -72,12 +75,13 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
             }
             if(ValidChecker(user)) {
                     newUser.save(function (err, userItem) {
-                        if (err) return console.error(err);
-                        console.log(userItem.name + " saved to users.");
+                        if (err) {
+                            console.log(err);
+                        }
                     });
                     MongoClient.connect(mongoConnect, (err, client) => {
                         assert.equal(null, err);
-                        insertDocuments(client, 'server/usersImg' + req.file.originalname, () => {
+                        insertDocuments(client, imgPath + req.file.originalname, () => {
                             const db = client.db('users');
                             client.close();
                         });
@@ -92,21 +96,46 @@ app.post('/addUser', upload.single('photo'), (req, res, next) => {
     }
 });
 
-app.post('/sendAuthorizedUser', (req, res, next) => {
-    let authUser = req.body;
+// const generateRefreshToken=((req, res, next)=> {
+//     if (req.query.permanent === 'true') {
+//         req.token.refreshToken = req.user.clientId.toString() + '.'+freshToken;
+//         Users.storeToken({
+//             id: req.user.clientId,
+//             refreshToken: req.token.refreshToken
+//         }, next);
+//     } else {
+//         next();
+//     }
+// })
 
+app.post(sendAuthorizesUser, (req, res, next) => {
+    let authUser = req.body;
     Users.findOne({email: authUser.email}, (err, user)=>{
         if(!user){
             res.send(200, 'invalidEmail');
         } else if(user.password!==authUser.password){
             res.send(200, 'invalidPsd');
         } else{
-            jwt.sign({authUser}, 'secretkey', {expiresIn: timeToExpire},(err, token)=>{
-                res.send(200, token);
+            const refreshToken = randtoken.uid(256);
+
+            jwt.sign({authUser}, secretKey, {expiresIn: timeToExpire},(err, token)=>{
+                res.send(200, ({user, token, refreshToken}));
             })
         }
     })
 })
+
+// const validateRefreshToken =((req, res, generateRefreshToken, next)=> {
+//     Users.findUserOfToken(req.body, function(err, user) {
+//         if (err) {
+//             return next(err);
+//         }
+//         req.user = user;
+//         next();
+//     });
+// })
+
+
 
 const verifyToken = ((req, res, next)=>{
     const bearerHeader = req.headers['authorization'];
@@ -121,17 +150,56 @@ const verifyToken = ((req, res, next)=>{
 })
 
 
-app.post('/usersFriends', verifyToken, (req, res) => {
-    jwt.verify(req.token, 'secretkey', (err, authData)=>{
+app.get(main, verifyToken, (req, res) => {
+    jwt.verify(req.token, secretKey, (err, authData)=>{
         if(err){
             res.send(403);
         } else{
             res.send(200, authData);
         }
     })
-
 })
 
+app.get(friends, verifyToken, (req, res) => {
+    jwt.verify(req.token, secretKey, (err, authData)=>{
+        if(err){
+            console.log(err);
+            res.send(403);
+        } else{
+            res.send(200, authData);
+        }
+    })
+})
+
+app.get(settings, verifyToken, (req, res) => {
+    jwt.verify(req.token, secretKey, (err, authData)=>{
+        if(err){
+            res.send(403);
+        } else{
+            res.send(200, authData);
+        }
+    })
+})
+
+app.get(search, verifyToken, (req, res) => {
+    jwt.verify(req.token, secretKey, (err, authData)=>{
+        if(err){
+            res.send(403);
+        } else{
+            res.send(200, authData);
+        }
+    })
+})
+
+app.get(news, verifyToken, (req, res) => {
+    jwt.verify(req.token, secretKey, (err, authData)=>{
+        if(err){
+            res.send(403);
+        } else{
+            res.send(200, authData);
+        }
+    })
+})
 const insertDocuments = function(client, filePath, callback) {
     const db = client.db('users');
 

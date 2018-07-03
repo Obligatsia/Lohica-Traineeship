@@ -10,10 +10,13 @@ import './css/style.css';
 import './index.css';
 import rootReducer from './reducers/index';
 import App from './components/App.js';
-import WelcomePage from './components/WelcomePage.js';
-import LogInPage from './components/LogInPage.js';
-import UserPage from './components/UserPage.js';
-
+import WelcomePage from './components/pages/WelcomePage.js';
+import LogInPage from './components/pages/LogInPage.js';
+import MainPage from './components/pages/MainPage.js';
+import FriendsPage from './components/pages/FriendsPage.js';
+import SearchPage from './components/pages/SearchPage.js';
+import NewsPage from './components/pages/NewsPage.js';
+import SettingsPage from './components/pages/SettingsPage.js';
 
 const store = createStore(rootReducer);
 
@@ -28,7 +31,11 @@ render(
     <Route path="/register" component={App} />
 <Route path="/welcomePage" component={WelcomePage} />
 <Route path="/logIn" component={LogInPage} />
-<Route path="/userPage" component={UserPage} />
+<Route path="/main" component={MainPage} />
+<Route path="/news" component={NewsPage} />
+<Route path="/friends" component={FriendsPage} />
+<Route path="/settings" component={SettingsPage} />
+<Route path="/search" component={SearchPage} />
 </div>
 </BrowserRouter>
 

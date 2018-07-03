@@ -1,6 +1,6 @@
 import React from 'react'
-import Header from './HeaderLogIn'
-import LogIn from './LogIn'
+import Header from '../HeaderLogIn'
+import LogIn from '../LogIn'
 
 const LogInPage = () => (
     <div>

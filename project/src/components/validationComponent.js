@@ -12,9 +12,14 @@ module.exports = class Validation {
         return result;
     }
 
-    static validatePhoto(name, size){
-        if((size>=minSize)&&(size<maxSize)) {
-            let result = photoPattern.exec(name);
+    static validatePhoto(img){
+        if((img)&&(img.size>=minSize)&&(img.size<maxSize)) {
+            let result;
+            if(img.filename){
+                result = photoPattern.exec(img.filename);
+            } else{
+                result = photoPattern.exec(img.name);
+            }
             return result;
         } else {
             return false

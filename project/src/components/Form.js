@@ -8,7 +8,7 @@ import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 const Validation = require ('../components/validationComponent.js');
 const SendRequest = require ('../components/Requests.js');
-const {addUserUrl} = require('../constants');
+const {addUserUrl, welcomePage} = require('../constants');
 
 const myRouterComponent = withRouter (class Form extends Component {
 
@@ -21,7 +21,7 @@ const myRouterComponent = withRouter (class Form extends Component {
                 for (let key in data) {
                     if(key==='password'){
                         props.dispatch(addValue('password', data.password, true));
-                        props.history.push('/welcomePage');
+                        props.history.push(welcomePage);
                     } else if(data[key]==='nameValid') {
                         if(!data[key]){
                             for(let i=0; i<form.elements.length; i++){
@@ -33,7 +33,7 @@ const myRouterComponent = withRouter (class Form extends Component {
             }
     }
 
-    classToggle =(valid, target)=>{
+    classToggle (valid, target){
         if(valid){
             target.classList.remove('is-invalid');
             target.classList.add('is-valid');
@@ -43,50 +43,39 @@ const myRouterComponent = withRouter (class Form extends Component {
         }
     }
 
-    onChange= (e, field, validMethod, name)=>{
+    onChange(e, field, validMethod, name){
         let val = e.target.value;
-        let valid = validMethod(field.value);
+        let valid=(validMethod===true)?true: validMethod(field.value);
         this.props.dispatch(addValue(name, val, valid));
         this.classToggle(valid, e.target);
     }
 
-    onPhotoChange= (e, validMethod, name, img)=>{
-            img = e.target.files[0];
-            let valid;
-            if(e.target.value){
-                valid = validMethod(img.name, img.size);
-            } else{
-                valid = false;
-            }
+    onPhotoChange (e, validMethod, name){
+            let img = e.target.files[0];
+            let valid = validMethod(img);;
             this.props.dispatch(addValue(name, e.target.files[0], valid));
             this.classToggle(valid, e.target);
     }
 
-    onMiddleNameChange= (e, field, validMethod, name)=>{
+    onMiddleNameChange (e, field, validMethod, name){
         let val = e.target.value;
         let valid;
         valid=val?validMethod(field.value):true;
         this.props.dispatch(addValue(name, val, valid));
-        if(!val||valid){
-            e.target.classList.remove('is-invalid');
-            e.target.classList.add('is-valid');
-        } else{
-            e.target.classList.add('is-invalid');
-            e.target.classList.remove('is-valid');
-        }
+        this.classToggle ((!val||valid), e.target)
     }
 
-    onSubmit = (e, form)=>{
-        let valid=[];
+    onSubmitForm (e, form){
+        let inValidElements=[];
         for (let name in this.props.user){
             for(let isValid in this.props.user[name]){
                 let valueValidated = this.props.user[name].isValid;
                 if(!valueValidated){
-                    valid.push(this.props.user[name]);
+                    inValidElements.push(this.props.user[name]);
                 }
             }
         }
-        if(!valid.length){
+        if(!inValidElements.length){
             document.getElementById('btnGroup').classList.remove('errorMsg');
             let user = this.props.user;
 
@@ -118,7 +107,6 @@ const myRouterComponent = withRouter (class Form extends Component {
             let ageField;
             let genderField;
             let middleNameField;
-            let imgFile;
             let form = document.getElementById('registerForm');
 
             return (
@@ -147,14 +135,14 @@ const myRouterComponent = withRouter (class Form extends Component {
 
             <div className='form-group'>
                 <label htmlFor ='photo'>Choose photo</label>
-            <input  className = 'form-control' type ='file' id='photo' onChange={(e)=>this.onPhotoChange(e, Validation.validatePhoto, 'photo', imgFile)} name = 'photo'></input>
+            <input  className = 'form-control' type ='file' id='photo' onChange={(e)=>this.onPhotoChange(e, Validation.validatePhoto, 'photo')} name = 'photo'></input>
                 <div className="invalid-feedback">Files formate only JPEG, JPG, PNG (40kb - 5mb)</div>
             <small id="photoHelp" className="form-text text-muted">size between 40kb and 5mb</small>
             </div>
 
             <div className='form-group'>
                 <label htmlFor='gender'>Select your gender</label>
-            <select  className = 'form-control' id='gender' onChange={(e)=>this.onChange(e, genderField, true, 'gender')}>
+            <select  ref={node => genderField = node} className = 'form-control' id='gender' onChange={(e)=>this.onChange(e, genderField, true, 'gender')}>
                 <option value = 'male'>Male</option>
                 <option value = 'female'>Female</option>
                 </select>
@@ -177,7 +165,7 @@ const myRouterComponent = withRouter (class Form extends Component {
             </div>
 
             <div className='form-group' id='btnGroup'>
-                <input type ='button' className='btn btn-primary' onClick = {(e)=>this.onSubmit(form)} value='Save'></input>
+                <input type ='button' className='btn btn-primary' onClick = {(e)=>this.onSubmitForm(e, form)} value='Save'></input>
             </div>
             </form>
             </div>

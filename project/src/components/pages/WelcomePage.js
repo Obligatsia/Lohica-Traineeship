@@ -1,6 +1,6 @@
 import React from 'react'
-import Header from './HeaderLogIn'
-import Greeting from './Greeting'
+import Header from '../HeaderLogIn'
+import Greeting from '../Greeting'
 
 const WelcomePage = () => (
     <div>
