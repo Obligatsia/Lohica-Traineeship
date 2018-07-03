@@ -6,8 +6,8 @@ import $ from 'jquery'
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
-const Validation = require ('../components/validationComponent.js');
-const SendRequest = require ('../components/Requests.js');
+const Validation = require ('./validationComponent.js');
+const SendRequest = require ('./Requests.js');
 const {addUserUrl, welcomePage} = require('../constants');
 
 const myRouterComponent = withRouter (class Form extends Component {
@@ -33,7 +33,7 @@ const myRouterComponent = withRouter (class Form extends Component {
             }
     }
 
-    classToggle (valid, target){
+    static classToggle (valid, target){
         if(valid){
             target.classList.remove('is-invalid');
             target.classList.add('is-valid');
@@ -47,22 +47,21 @@ const myRouterComponent = withRouter (class Form extends Component {
         let val = e.target.value;
         let valid=(validMethod===true)?true: validMethod(field.value);
         this.props.dispatch(addValue(name, val, valid));
-        this.classToggle(valid, e.target);
+        myRouterComponent.classToggle(valid, e.target);
     }
 
     onPhotoChange (e, validMethod, name){
             let img = e.target.files[0];
             let valid = validMethod(img);;
             this.props.dispatch(addValue(name, e.target.files[0], valid));
-            this.classToggle(valid, e.target);
+            myRouterComponent.classToggle(valid, e.target);
     }
 
     onMiddleNameChange (e, field, validMethod, name){
         let val = e.target.value;
-        let valid;
-        valid=val?validMethod(field.value):true;
+        let valid=val?validMethod(field.value):true;
         this.props.dispatch(addValue(name, val, valid));
-        this.classToggle ((!val||valid), e.target)
+        myRouterComponent.classToggle ((!val||valid), e.target)
     }
 
     onSubmitForm (e, form){
@@ -135,7 +134,7 @@ const myRouterComponent = withRouter (class Form extends Component {
 
             <div className='form-group'>
                 <label htmlFor ='photo'>Choose photo</label>
-            <input  className = 'form-control' type ='file' id='photo' onChange={(e)=>this.onPhotoChange(e, Validation.validatePhoto, 'photo')} name = 'photo'></input>
+        <input  className = 'form-control' type ='file' id='photo' onChange={(e)=>this.onPhotoChange(e, Validation.validatePhoto, 'photo')} name = 'photo'></input>
                 <div className="invalid-feedback">Files formate only JPEG, JPG, PNG (40kb - 5mb)</div>
             <small id="photoHelp" className="form-text text-muted">size between 40kb and 5mb</small>
             </div>

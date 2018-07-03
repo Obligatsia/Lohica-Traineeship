@@ -2,6 +2,10 @@
     width: 100%;
     margin: 0 auto;
 }
+.hidden{
+    display: none;
+}
+
 /*====================================================================================*/
 header{
     padding: 10px;
@@ -94,6 +98,24 @@ header img{
 }
 /*=====================================================================================================*/
 
+.userInfo{
+    margin-top: 10px;
+}
+.userInfo .form-control{
+    padding: 3px;
+}
 .photoBlock img{
     width: 100%;
 }
+.infoBlock p{
+    width: 33%;
+    height: 35px;
+    margin-bottom: 5px;
+}
+.userInfo .buttons{
+    margin-top: 30px;
+}
+.buttons input{
+    margin-right: 5px;
+}
+

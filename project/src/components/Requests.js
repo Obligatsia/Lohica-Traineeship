@@ -19,6 +19,23 @@ module.exports = class SendRequest {
         });
     }
 
+    static sendForEdition(url, method, data, successFunc, props) {
+        $.ajax({
+            url,
+            method,
+            data,
+            contentType: false,
+            processData: false,
+            success: function (newData) {
+                successFunc(newData, props)
+            },
+            error: ((data) => {
+                console.log(data.status + ': ' + data.statusText);
+            })
+        });
+    }
+
+
     static sendForLogIn(url, method, data, successFunc, btnGroup, props, toggleClasses, user, saveToLocalStorage) {
         $.ajax({
             url,

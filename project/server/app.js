@@ -11,7 +11,7 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news} = require('../src/constants');
+const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser} = require('../src/constants');
 const {storage} = require('./storage');
 const randtoken = require('rand-token');
 
@@ -107,6 +107,10 @@ app.post(addUsers, upload.single('photo'), (req, res, next) => {
 //         next();
 //     }
 // })
+
+app.post(editUser, (req, res, next) => {
+    res.send(200, 'Server got editUser');
+})
 
 app.post(sendAuthorizesUser, (req, res, next) => {
     let authUser = req.body;
