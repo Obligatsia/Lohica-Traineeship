@@ -4,8 +4,14 @@ import '../css/style.css';
 import img from '../img/logo.png';
 import { Link} from 'react-router-dom';
 import {logIn} from '../constants'
+import {withRouter} from 'react-router-dom'
 
-export default class HeaderLogOut extends React.Component{
+const myRouterHeaderLogOutComponent = withRouter (class HeaderLogOut extends React.Component{
+    onClick(e){
+        e.preventDefault();
+        this.props.history.push(logIn);
+        localStorage.removeItem('user');
+    }
     render(){
         return <header>
         <nav className="navbar navbar-light bg-faded">
@@ -14,9 +20,11 @@ export default class HeaderLogOut extends React.Component{
         Social Network
         </a>
         <ul>
-        <li><Link to={logIn}>Log out</Link></li>
+        <li ><a href='#' onClick ={(e)=>{this.onClick(e)}}>Log out</a></li>
         </ul>
         </nav>
         </header>
     }
-};
+});
+
+export default myRouterHeaderLogOutComponent;

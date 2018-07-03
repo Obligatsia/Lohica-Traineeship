@@ -4,8 +4,13 @@ import '../css/style.css';
 import img from '../img/logo.png';
 import { Link} from 'react-router-dom';
 import {logIn} from '../constants';
+import {withRouter} from 'react-router-dom'
 
-export default class HeaderLogIn extends React.Component{
+const myRouterHeaderLogInComponent = withRouter (class HeaderLogIn extends React.Component{
+    onClick(e){
+        e.preventDefault();
+        this.props.history.push(logIn);
+    }
   render(){
     return <header>
     <nav className="navbar navbar-light bg-faded">
@@ -14,9 +19,11 @@ export default class HeaderLogIn extends React.Component{
       Social Network
       </a>
       <ul>
-      <li><Link to={logIn}>Log in</Link></li>
+      <li ><a href='#' onClick ={(e)=>{this.onClick(e)}}>Log in</a></li>
       </ul>
       </nav>
     </header>
   }
-};
+});
+
+export default myRouterHeaderLogInComponent;

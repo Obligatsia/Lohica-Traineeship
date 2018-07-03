@@ -31,10 +31,10 @@ const LogInRouterComponent = withRouter(
             } else if(newData==='invalidEmail') {
                 toggleClasses(btnGroup, 'errorMsg', 'invalidEmailMsg', 'invalidPsdMsg', null )
             } else{
-                toggleClasses(btnGroup, 'errorMsg', null, 'invalidEmailMsg', 'invalidPsdMsg')
-                props.history.push(main);
                 newData.user.token = newData.token;
                 saveToLocalStorage(newData.user);
+                toggleClasses(btnGroup, 'errorMsg', null, 'invalidEmailMsg', 'invalidPsdMsg')
+                props.history.push(main);
             }
         }
 
