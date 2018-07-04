@@ -1,12 +1,99 @@
 #main{
-    width: 90%;
-    margin: 0 auto;
-    padding: 20px;
-}
-#registerForm{
-    width: 70%;
+    width: 100%;
     margin: 0 auto;
 }
-#registerForm label{
-    width: 25%;
+/*====================================================================================*/
+header{
+    padding: 10px;
+    border-bottom: 1px solid #5a6268;
+}
+header img{
+    margin-right: 20px;
+}
+.navbar ul{
+    list-style-type: none;
+    display: flex;
+    padding: 0 10px;
+    width: 20%;
+    margin: 0;
+    justify-content: space-evenly;
+}
+
+
+
+/*====================================================================================*/
+
+
+#registerForm, #logInForm {
+    margin: 0 auto;
+    margin-top: 20px;
+}
+.form-group{
+    font-size: 14px;
+}
+#btnGroup{
+    position: relative;
+}
+.errorMsg:after{
+    content: 'Fill all fields correctly';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
+}
+.emailErrorMsg:after{
+    content: 'User with such email was already registered';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
+}
+
+#registerForm label:before{
+    content: '*';
+    color: red;
+}
+#registerForm #optional:before{
+    content: '';
+}
+/*====================================================================================*/
+
+
+.greetingMsg{
+    margin: 0 auto;
+    padding: 40px;
+    width: 30%;
+    text-align: center;
+}
+.greetingMsg span{
+    font-size: 20px;
+}
+.greetingMsg p{
+    margin-bottom: 2px;
+}
+
+/*========================================================================*/
+
+.invalidPsdMsg:after{
+    content: 'Wrong password';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
+}
+.invalidEmailMsg:after{
+    content: 'User with such email is not registered';
+    display: block;
+    color: red;
+    position: absolute;
+    left: 30%;
+    top: 0;
+}
+/*=====================================================================================================*/
+
+.photoBlock img{
+    width: 100%;
 }
