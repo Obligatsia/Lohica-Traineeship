@@ -11,7 +11,7 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser} = require('../src/constants');
+const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn} = require('../src/constants');
 const {storage} = require('./storage');
 const randtoken = require('rand-token');
 
@@ -96,17 +96,6 @@ app.post(addUsers, upload.single('photo'), (req, res, next) => {
     }
 });
 
-// const generateRefreshToken=((req, res, next)=> {
-//     if (req.query.permanent === 'true') {
-//         req.token.refreshToken = req.user.clientId.toString() + '.'+freshToken;
-//         Users.storeToken({
-//             id: req.user.clientId,
-//             refreshToken: req.token.refreshToken
-//         }, next);
-//     } else {
-//         next();
-//     }
-// })
 
 app.post(editUser, (req, res, next) => {
     res.send(200, 'Server got editUser');
@@ -129,15 +118,6 @@ app.post(sendAuthorizesUser, (req, res, next) => {
     })
 })
 
-// const validateRefreshToken =((req, res, generateRefreshToken, next)=> {
-//     Users.findUserOfToken(req.body, function(err, user) {
-//         if (err) {
-//             return next(err);
-//         }
-//         req.user = user;
-//         next();
-//     });
-// })
 
 
 
@@ -157,7 +137,7 @@ const verifyToken = ((req, res, next)=>{
 app.get(main, verifyToken, (req, res) => {
     jwt.verify(req.token, secretKey, (err, authData)=>{
         if(err){
-            res.send(403);
+            res.redirect(logIn);
         } else{
             res.send(200, authData);
         }

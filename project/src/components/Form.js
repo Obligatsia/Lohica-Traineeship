@@ -7,12 +7,25 @@ import $ from 'jquery'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 const Validation = require ('./validationComponent.js');
-const SendRequest = require ('./Requests.js');
+const AjaxRequest = require ('./Requests.js');
 const {addUserUrl, welcomePage} = require('../constants');
+const {Input, FormGroup, SelectTag} =require ('./Tags');
+
+
 
 const myRouterComponent = withRouter (class Form extends Component {
+    constructor(props) {
+        super(props);
+        this.onChange = myRouterComponent.onChange.bind(this);
+        this.onPhotoChange = myRouterComponent.onPhotoChange.bind(this);
+        this.onMiddleNameChange = myRouterComponent.onMiddleNameChange.bind(this);
+    }
 
-    successFunc (data, btnGroup, form, props){
+
+    successFunc (data, ...args ){
+        let btnGroup=args[0];
+        let form=args[1];
+        let props=args[2];
             if(data ==='emailError'){
                 $(btnGroup).removeClass('errorMsg');
                 $(btnGroup).addClass('emailErrorMsg');
@@ -33,6 +46,7 @@ const myRouterComponent = withRouter (class Form extends Component {
             }
     }
 
+
     static classToggle (valid, target){
         if(valid){
             target.classList.remove('is-invalid');
@@ -43,25 +57,25 @@ const myRouterComponent = withRouter (class Form extends Component {
         }
     }
 
-    onChange(e, field, validMethod, name){
+    static onChange(e, validMethod, name, props){
         let val = e.target.value;
-        let valid=(validMethod===true)?true: validMethod(field.value);
-        this.props.dispatch(addValue(name, val, valid));
+        let valid=validMethod(val);
+        props.dispatch(addValue(name, val, valid));
         myRouterComponent.classToggle(valid, e.target);
     }
 
-    onPhotoChange (e, validMethod, name){
+    static onPhotoChange (e, validMethod, name, props){
             let img = e.target.files[0];
-            let valid = validMethod(img);;
-            this.props.dispatch(addValue(name, e.target.files[0], valid));
+            let valid = validMethod(img);
+            props.dispatch(addValue(name, e.target.files[0], valid));
             myRouterComponent.classToggle(valid, e.target);
     }
 
-    onMiddleNameChange (e, field, validMethod, name){
+    static onMiddleNameChange (e, validMethod, name, props){
         let val = e.target.value;
-        let valid=val?validMethod(field.value):true;
-        this.props.dispatch(addValue(name, val, valid));
-        myRouterComponent.classToggle ((!val||valid), e.target)
+        let valid=val?validMethod(val):true;
+        props.dispatch(addValue(name, val, valid));
+        myRouterComponent.classToggle ((!val||valid), e.target);
     }
 
     onSubmitForm (e, form){
@@ -87,7 +101,7 @@ const myRouterComponent = withRouter (class Form extends Component {
             userFormData.append('age', user.age.value);
             userFormData.append('middleName', user.middleName.value);
 
-            SendRequest.sendForRegistration(addUserUrl, 'POST', userFormData, this.successFunc, $('#btnGroup'), form, this.props)
+            AjaxRequest.sendRequest(addUserUrl, 'POST', userFormData, false, false, user.token, this.successFunc, $('#btnGroup'), form, this.props)
         } else{
             let form = document.getElementById('registerForm');
             $('#btnGroup').addClass('errorMsg');
@@ -99,69 +113,26 @@ const myRouterComponent = withRouter (class Form extends Component {
         }
     };
 
+
     render(){
-            let nameField;
-            let surNameField;
-            let emailField;
-            let ageField;
-            let genderField;
-            let middleNameField;
             let form = document.getElementById('registerForm');
 
-            return (
+    return (
                 <div>
                 <form  className = 'row d-flex flex-column col-sm-3' id='registerForm'>
-        <div className='form-group'>
-                <label htmlFor ='name'>Enter your Name</label>
-            <input onChange={(e)=>this.onChange(e, nameField, Validation.validateName, 'name')} ref={node => nameField = node} className = 'form-control' type ='text' placeholder='John' id='name' ></input>
-            <div className="invalid-feedback">Only latin letters</div>
-            <small id="nameHelp" className="form-text text-muted">latin letters, length 1-32</small>
-            </div>
+            <FormGroup id='name' task='Enter your Name' type='text' placeholder='Ivan' func={(e)=>myRouterComponent.onChange(e, Validation.validateName, 'name', this.props)} feedback='Only latin letters' helpId='nameHelp' helpText='latin letters, length 1-32'/>
 
-            <div className='form-group'>
-                <label htmlFor ='surname' >Enter your Surname</label>
-            <input  ref={node => surNameField = node}  className = 'form-control' type ='text' placeholder='Smith' id='surname' onChange={(e)=>this.onChange(e, surNameField, Validation.validateName, 'surName')}></input>
-                <div className="invalid-feedback">Only latin letters</div>
-            <small id="surNameHelp" className="form-text text-muted">latin letters, length 1-32</small>
-            </div>
+            <FormGroup id='surname' task='Enter your Surname' type='text' placeholder='Smith' func={(e)=>myRouterComponent.onChange(e, Validation.validateName, 'surName', this.props)} feedback='Only latin letters' helpId='surNameHelp' helpText='latin letters, length 1-32'/>
 
-            <div className='form-group'>
-                <label htmlFor ='email'>Enter your e-mail</label>
-            <input  ref={node => emailField = node} className = 'form-control' type ='text' placeholder='johnsmith@gmail.com' id='email' onChange={(e)=>this.onChange(e, emailField, Validation.validateEmail, 'email')}></input>
-                <div className="invalid-feedback">Please, enter correct email</div>
-            <small id="emailHelp" className="form-text text-muted">f.e. 'johnsmith@gmail.com'</small>
-            </div>
+            <FormGroup id='email' task='Enter your e-mail' type='text' placeholder='johnsmith@gmail.com' func={(e)=>myRouterComponent.onChange(e, Validation.validateEmail, 'email', this.props)} feedback='Please, enter correct email' helpId='emailHelp' helpText='f.e. johnsmith@gmail.com'/>
 
-            <div className='form-group'>
-                <label htmlFor ='photo'>Choose photo</label>
-        <input  className = 'form-control' type ='file' id='photo' onChange={(e)=>this.onPhotoChange(e, Validation.validatePhoto, 'photo')} name = 'photo'></input>
-                <div className="invalid-feedback">Files formate only JPEG, JPG, PNG (40kb - 5mb)</div>
-            <small id="photoHelp" className="form-text text-muted">size between 40kb and 5mb</small>
-            </div>
+            <FormGroup id='photo' task='Choose photo' type='file' func={(e)=>myRouterComponent.onPhotoChange(e, Validation.validatePhoto, 'photo', this.props)} feedback='Files formate only JPEG, JPG, PNG (40kb - 5mb)' helpId='photoHelp' helpText='size between 40kb and 5mb'/>
 
-            <div className='form-group'>
-                <label htmlFor='gender'>Select your gender</label>
-            <select  ref={node => genderField = node} className = 'form-control' id='gender' onChange={(e)=>this.onChange(e, genderField, true, 'gender')}>
-                <option value = 'male'>Male</option>
-                <option value = 'female'>Female</option>
-                </select>
-                </div>
-                <div className='form-group'>
-                <label htmlFor ='age' >Select your age</label>
-            <input  ref={node => ageField = node} className = 'form-control' type ='number' id='age'  placeholder = '18'
+            <SelectTag func={(e)=>myRouterComponent.onChange(e, Validation.validateGender, 'gender', this.props)}/>
 
-        onChange={(e)=>this.onChange(e, ageField, Validation.validateAge, 'age')}
+        <FormGroup id='age' task='Select your age' type='number' placeholder='18' func={(e)=>myRouterComponent.onChange(e, Validation.validateAge, 'age', this.props)} feedback='Please, enter correct age' />
 
-    ></input>
-                <div className="invalid-feedback">Please, enter correct age</div>
-            </div>
-
-            <div className='form-group'>
-                <label htmlFor ='middleName' id='optional' >Enter your Middle Name</label>
-            <input  ref={node => middleNameField = node} className = 'form-control' type ='text' placeholder='Brown' id='middleName' onChange={(e)=>this.onMiddleNameChange(e, middleNameField, Validation.validateName, 'middleName')}></input>
-                <div className="invalid-feedback">Only latin letters</div>
-            <small id="middleNameHelp" className="form-text text-muted">latin letters, length 1-32</small>
-            </div>
+            <FormGroup id='middleName' labelId='optional' task='Enter your Middle Name' type='text' placeholder='Brown' func={(e)=>myRouterComponent.onMiddleNameChange(e, Validation.validateName, 'middleName', this.props)} feedback='Only latin letters' helpId='surNameHelp' helpText='latin letters, length 1-32'/>
 
             <div className='form-group' id='btnGroup'>
                 <input type ='button' className='btn btn-primary' onClick = {(e)=>this.onSubmitForm(e, form)} value='Save'></input>

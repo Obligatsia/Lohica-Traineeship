@@ -3,7 +3,7 @@
     margin: 0 auto;
 }
 .hidden{
-    display: none;
+    display: none!important;
 }
 
 /*====================================================================================*/
@@ -108,14 +108,26 @@ header img{
     width: 100%;
 }
 .infoBlock p{
-    width: 33%;
+    width: 30%;
     height: 35px;
     margin-bottom: 5px;
 }
 .userInfo .buttons{
     margin-top: 30px;
+    width: auto;
 }
 .buttons input{
     margin-right: 5px;
 }
-
+.userInfo .fa{
+    vertical-align: super;
+}
+.userInfo .fa:focus,
+.userInfo button:focus{
+   outline: none;
+}
+.userInfo button{
+    background: none;
+    border: none;
+    cursor: pointer;
+}

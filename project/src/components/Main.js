@@ -4,45 +4,45 @@ import {withRouter} from 'react-router-dom'
 import $ from 'jquery'
 import MyRouterComponent from './Form';
 import Validation from './validationComponent.js';
-import SendRequest from './Requests.js';
+import AjaxRequest from './Requests.js';
 import {editUserUrl} from '../constants';
+import {InfoDiv, PhotoDiv, GenderDiv, Input} from './Tags';
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
-import {addValue} from "../actions";
 
 
 const myMainComponent = withRouter (class Main extends Component {
-    successFunc (data, btnGroup, form, props){
-        console.log(data);
+    constructor(props) {
+        super(props);
+        this.onChange = MyRouterComponent.onChange.bind(this);
+        this.onPhotoChange = MyRouterComponent.onPhotoChange.bind(this);
+        this.onMiddleNameChange = MyRouterComponent.onMiddleNameChange.bind(this);
+        this.on = this.editElement.bind(this);
     }
 
+    showInputs (showOne, showTwo, showThree,  showFour, hideOne, hideTwo, hideThree,){
+        $(hideOne).addClass('hidden');
+        $(hideTwo).addClass('hidden');
+        $(hideThree).addClass('hidden');
+        $(showOne).removeClass('hidden');
+        $(showTwo).removeClass('hidden');
+        $(showThree).removeClass('hidden');
+        $(showFour).removeClass('hidden');
+    }
+
+    successFunc (data, ...args){
+        console.log(...args);
+    }
+
+    editElement (e){
+        let parent = e.target.parentNode.parentNode;
+        let editField=parent.childNodes[parent.childNodes.length-1];
+        this.showInputs($('#saveChanges'), $('#cancelChanges'), editField, null, $('#editInputs'), null,  null);
+    }
 
     editInputs(e){
-        $(e.target).addClass('hidden');
-        $('#saveChanges').removeClass('hidden');
-        $('#cancelChanges').removeClass('hidden');
-        $('.hiddenInput').removeClass('hidden');
-    }
-
-    onChange(e, field, validMethod, name){
-        let val = e.target.value;
-        let valid=(validMethod===true)?true: validMethod(field.value);
-        this.props.dispatch(addValue(name, val, valid));
-        MyRouterComponent.classToggle(valid, e.target);
-    }
-    onPhotoChange (e, validMethod, name){
-        let img = e.target.files[0];
-        let valid = validMethod(img);;
-        this.props.dispatch(addValue(name, e.target.files[0], valid));
-        MyRouterComponent.classToggle(valid, e.target);
-    }
-
-    onMiddleNameChange (e, field, validMethod, name){
-        let val = e.target.value;
-        let valid=val?validMethod(field.value):true;
-        this.props.dispatch(addValue(name, val, valid));
-        MyRouterComponent.classToggle ((!val||valid), e.target)
+        this.showInputs($('#saveChanges'), $('#cancelChanges'), $('.hiddenInput'), $('.middleNameBlock'), null, e.target, null, );
     }
 
     saveChanges(e){
@@ -50,7 +50,8 @@ const myMainComponent = withRouter (class Main extends Component {
         const inValidElements=[];
         for(let i=0; i<inputs.length; i++){
             let name = inputs[i].childNodes[0].name;
-            if((!inputs[i].childNodes[0].value)&&(inputs[i].childNodes[0].name!=='middleName')){
+            if((!inputs[i].childNodes[0].value)&&(inputs[i].childNodes[0].id!=='middleName')){
+                console.log(inputs[i]);
                 inputs[i].childNodes[0].classList.add('is-invalid');
                 inValidElements.push(inputs[i].childNodes[0]);
             } else if(!$(inputs[i].childNodes[0]).hasClass('is-invalid')) {
@@ -67,13 +68,13 @@ const myMainComponent = withRouter (class Main extends Component {
             userFormData.append('gender', user.gender.value);
             userFormData.append('age', user.age.value);
             userFormData.append('middleName', user.middleName.value);
-
-            SendRequest.sendForEdition(editUserUrl, 'POST', userFormData, this.successFunc, this.props)
+            AjaxRequest.sendRequest(editUserUrl, 'POST', userFormData, false, false, user.token, this.successFunc, this.props)
         }
     }
 
 
     cancelChanges(e){
+        this.showInputs ($('#editInputs'), null, null, null,$('#saveChanges'), $('.hiddenInput'), e.target)
         $('#editInputs').removeClass('hidden');
         $('#saveChanges').addClass('hidden');
         $(e.target).addClass('hidden');
@@ -86,80 +87,28 @@ const myMainComponent = withRouter (class Main extends Component {
 
         const photoArr= user.photo.path.split('\\');
         const photoPath = photoArr[1]+'/'+photoArr[2];
-        let nameField;
-        let surNameField;
-        let emailField;
-        let ageField;
-        let genderField;
-        let middleNameField;
 
         return (
         <div className ='d-flex userInfo'>
 
-            <div className = 'photoBlock d-flex flex-column col-sm-4'>
-            <div className = 'col-sm-12'>
-            <p><img src={photoPath} ></img></p>
-            <p className = 'hidden hiddenInput'>
-            <input onChange={(e)=>this.onPhotoChange(e, Validation.validatePhoto, 'photo')} className = 'form-control' type ='file' name = 'photo'>
-            </input> </p>
-            </div>
-            </div>
-
+            <PhotoDiv photoPath = {photoPath} function = {(e)=>MyRouterComponent.onPhotoChange(e, Validation.validatePhoto, 'photo', this.props)} editFunc = {(e)=>this.editElement(e)}/>
 
             <div className = 'infoBlock d-flex flex-column col-sm-6'>
-            <div className = 'surNameBlock d-flex'>
-            <p>Surname:</p>
-            <p>{user.surName}</p>
-            <p className = 'hidden hiddenInput'>
-            <input onChange={(e)=>this.onChange(e, surNameField, Validation.validateName, 'surName')} ref={node => surNameField = node} className = 'form-control' type ='text' name = 'surName' placeholder='surName'></input>
-            </p>
-            </div>
 
-            <div className = 'nameBlock d-flex'>
-            <p>Name: </p>
-            <p>{user.name}</p>
-            <p className = 'hidden hiddenInput'>
-            <input onChange={(e)=>this.onChange(e, nameField, Validation.validateName, 'name')} ref={node => nameField = node} className = 'form-control' type ='text' name = 'name' placeholder='name'></input>
-            </p>
-            </div>
+            <InfoDiv class='surNameBlock d-flex' name = 'SurName:' value={user.surName} type='text' id='surName' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateName, 'surName', this.props)} editFunc = {(e)=>this.editElement(e)} />
 
-            <div className = 'middleNameBlock d-flex'>
-            <p>Middlename:</p>
-        <p>{user.middleName}</p>
-        <p className = 'hidden hiddenInput'>
-            <input onChange={(e)=>this.onMiddleNameChange(e, middleNameField, Validation.validateName, 'middleName')} ref={node => middleNameField = node} className = 'form-control' type ='text' name = 'middleName' placeholder='middleName'></input>
-            </p>
-            </div>
+        <InfoDiv class='nameBlock d-flex' name = 'Name:' value={user.name} type='text' id='name' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateName, 'name', this.props)}  editFunc = {(e)=>this.editElement(e)}/>
 
-            <div className = 'emailBlock d-flex'>
-            <p>Email:</p>
-        <p>{user.email}</p>
-        <p className = 'hidden hiddenInput'>
-            <input onChange={(e)=>this.onChange(e, emailField, Validation.validateEmail, 'email')} ref={node => emailField = node} className = 'form-control' type ='text' name = 'email' placeholder='email'></input>
-            </p>
-            </div>
+        <InfoDiv class='middleNameBlock d-flex' name = 'MiddleName:' value={user.middleName} type='text' id='middleName' function = {(e)=>MyRouterComponent.onMiddleNameChange(e, Validation.validateName, 'middleName', this.props)}  editFunc = {(e)=>this.editElement(e)}/>
 
-            <div className = 'ageBlock d-flex'>
-            <p>Age:</p>
-        <p>{user.age}</p>
-        <p className = 'hidden hiddenInput'>
-            <input onChange={(e)=>this.onChange(e, ageField, Validation.validateAge, 'age')} ref={node => ageField = node} className = 'form-control' type ='number' name = 'age' placeholder='age'></input>
-            </p>
-            </div>
+        <InfoDiv class='emailBlock d-flex' name = 'Email:' value={user.email} type='text' id='email' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateEmail, 'email', this.props)}  editFunc = {(e)=>this.editElement(e)} />
 
-            <div className = 'genderBlock d-flex'>
-            <p>Gender:</p>
-        <p>{user.gender}</p>
-        <p className = 'hidden hiddenInput'>
-            <select onChange={(e)=>this.onChange(e, genderField, true, 'gender')} ref={node => genderField = node} className = 'form-control'>
-    <option value = 'male'>Male</option>
-            <option value = 'female'>Female</option>
-            </select>
-            </p>
-            </div>
+        <InfoDiv class='ageBlock d-flex' name = 'Age:' value={user.age} type='number' id='age' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateAge, 'age', this.props)}  editFunc = {(e)=>this.editElement(e)}/>
+
+        <GenderDiv function = {(e)=>MyRouterComponent.onChange(e, Validation.validateGender, 'gender', this.props)} name = {user.gender}  editFunc = {(e)=>this.editElement(e)}/>
 
             <p className = 'buttons'>
-            <input type ='button' className='btn btn-primary' id='editInputs' value='Edit' onClick = {(e)=>this.editInputs(e)}></input>
+            <input type ='button' className='btn btn-primary' id='editInputs' value='Edit all' onClick = {(e)=>this.editInputs(e)}></input>
         <input type ='button' className='btn btn-success hidden' id='saveChanges' value='Save' onClick = {(e)=>this.saveChanges(e)}></input>
         <input type ='button' className='btn btn-danger hidden' id='cancelChanges' value='Cancel' onClick = {(e)=>this.cancelChanges(e)}></input>
             </p>

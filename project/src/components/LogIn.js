@@ -7,7 +7,7 @@ import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import {addValue} from "../actions";
 const {sendAuthUserUrl, main} = require('../constants');
-const SendRequest = require ('../components/Requests.js');
+const AjaxRequest = require ('../components/Requests.js');
 
 
 const LogInRouterComponent = withRouter(
@@ -24,7 +24,12 @@ const LogInRouterComponent = withRouter(
             localStorage.setItem('user', jsonUser);
     }
 
-        successFunc(newData, btnGroup, props, toggleClasses, user, saveToLocalStorage){
+        successFunc(newData, ...args){
+            let btnGroup = args[0];
+            let props = args[1];
+            let toggleClasses = args[2];
+            let saveToLocalStorage = args[3];
+
             props.dispatch(addValue('token', newData.token, true));
             if(newData==='invalidPsd'){
                 toggleClasses(btnGroup, 'errorMsg', 'invalidPsdMsg', 'invalidEmailMsg', null )
@@ -51,7 +56,7 @@ const LogInRouterComponent = withRouter(
                     $('#btnGroup').removeClass('errorMsg');
                     let authorizedUser = {email: user.email.value, password: user.password.value};
                     let jsonAuthUser = JSON.stringify(authorizedUser);
-                    SendRequest.sendForLogIn(sendAuthUserUrl, 'POST', jsonAuthUser, this.successFunc, $('#btnGroup'), this.props, this.toggleClasses, user, this.saveToLocalStorage);
+                    AjaxRequest.sendRequest(sendAuthUserUrl, 'POST', jsonAuthUser, 'application/json; charset=utf-8', true, user.token, this.successFunc, $('#btnGroup'), this.props, this.toggleClasses, this.saveToLocalStorage);
                 }
         }
 
