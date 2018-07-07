@@ -20,6 +20,7 @@ const LogInRouterComponent = withRouter(
     }
 
     saveToLocalStorage (user){
+            user.middleName=user.middleName==='undefined'?'':user.middleName;
             let jsonUser = JSON.stringify(user);
             localStorage.setItem('user', jsonUser);
     }

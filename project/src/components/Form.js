@@ -6,9 +6,10 @@ import $ from 'jquery'
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
+import {logIn} from "../constants";
 const Validation = require ('./validationComponent.js');
 const AjaxRequest = require ('./Requests.js');
-const {addUserUrl, welcomePage} = require('../constants');
+const {addUserUrl, welcomePage, main} = require('../constants');
 const {Input, FormGroup, SelectTag} =require ('./Tags');
 
 
@@ -19,8 +20,11 @@ const myRouterComponent = withRouter (class Form extends Component {
         this.onChange = myRouterComponent.onChange.bind(this);
         this.onPhotoChange = myRouterComponent.onPhotoChange.bind(this);
         this.onMiddleNameChange = myRouterComponent.onMiddleNameChange.bind(this);
-    }
+        if(JSON.parse(localStorage.getItem('user'))){
+            this.props.history.push(main);
 
+        }
+    }
 
     successFunc (data, ...args ){
         let btnGroup=args[0];
@@ -115,8 +119,9 @@ const myRouterComponent = withRouter (class Form extends Component {
 
 
     render(){
-            let form = document.getElementById('registerForm');
+        const user = JSON.parse(localStorage.getItem('user'));
 
+            let form = document.getElementById('registerForm');
     return (
                 <div>
                 <form  className = 'row d-flex flex-column col-sm-3' id='registerForm'>

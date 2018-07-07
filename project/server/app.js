@@ -50,8 +50,6 @@ app.post(addUsers, upload.single('photo'), (req, res, next) => {
         emailValid = Validation.validateEmail(user.email);
         ageValid = Validation.validateAge(user.age);
         photoValid = Validation.validatePhoto(req.file);
-
-        middleNameValid;
         middleNameValid = user.middleName?Validation.validateName(user.middleName):true;
 
         return fieldsAreValid = nameValid && surNameValid && emailValid && ageValid && photoValid && middleNameValid;
@@ -97,9 +95,52 @@ app.post(addUsers, upload.single('photo'), (req, res, next) => {
 });
 
 
-app.post(editUser, (req, res, next) => {
-    res.send(200, 'Server got editUser');
-})
+app.post(editUser, upload.single('photo'),(req, res, next) => {
+    const editedUser = req.body;
+    let nameValid, surNameValid, emailValid, ageValid, photoValid, middleNameValid;
+    let ValidChecker = ((user)=>{
+        nameValid = Validation.validateName(editedUser.name);
+        surNameValid = Validation.validateName(editedUser.surName);
+        emailValid = Validation.validateEmail(editedUser.email);
+        ageValid = Validation.validateAge(editedUser.age);
+        photoValid = req.file?Validation.validatePhoto(req.file):true;
+        middleNameValid = editedUser.middleName?Validation.validateName(editedUser.middleName):true;
+
+        return fieldsAreValid = nameValid && surNameValid && emailValid && ageValid && photoValid && middleNameValid;
+    })
+    let invalidMsg = {
+        name: nameValid,
+        surName: surNameValid,
+        email: emailValid,
+        photo: photoValid,
+        age: ageValid,
+        middleName: middleNameValid
+    }
+
+    Users.findOne({email: editedUser.email}, function (err, userItem) {
+                    if(editedUser.id!==userItem.id){
+                        res.send(200, 'emailError');
+                    } else if(!ValidChecker(editedUser)){
+                        res.send(invalidMsg)
+                    } else{
+                        Users.findById(editedUser.id, function(err, user){
+                            user.name = editedUser.name;
+                            user.surName = editedUser.surName;
+                            user.email = editedUser.email;
+                            user.age = editedUser.age;
+                            user.gender = editedUser.gender;
+                            user.middleName = editedUser.middleName;
+                            user.token = editedUser.token;
+                            if(req.file){
+                                user.photo.path = req.file.path;
+                                user.photo.name = req.file.filename;
+                            }
+                            user.save(function(err, upUser){
+                                return res.send(user);                            })
+                        })
+                    }
+            })
+});
 
 app.post(sendAuthorizesUser, (req, res, next) => {
     let authUser = req.body;

@@ -107,10 +107,13 @@ header img{
 .photoBlock img{
     width: 100%;
 }
-.infoBlock p{
+.infoBlock .w30{
+    margin-top: 13px;
     width: 30%;
-    height: 35px;
     margin-bottom: 5px;
+}
+.infoBlock>div{
+    height: 60px;
 }
 .userInfo .buttons{
     margin-top: 30px;

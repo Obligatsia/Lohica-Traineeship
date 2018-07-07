@@ -22,15 +22,16 @@ export const SelectTag=props=>(
 )
 
 export const InfoDiv = props=>{
-    let classUndef=props.value?'':'hidden'
+    let classUndef=props.value?'':'hidden hiddenInput';
         return(
             <div className = {props.class+' '+classUndef}>
     <button id={props.id+'Btn'} onClick={props.editFunc}><FontAwesome name='edit' /></button>
-    <p>{props.name}</p>
-        <p>{props.value}</p>
-        <p className = 'hidden hiddenInput'>
-            <Input type ={props.type} id={props.id} func={props.function} />
-        </p>
+    <div className='w30'>{props.name}</div>
+        <div className='w30'>{props.value}</div>
+        <div className = 'w30 hidden hiddenInput'>
+            <Input type ={props.type} id={props.id} func={props.function} stateValue={props.stateValue}/>
+    <div className="invalid-feedback">{props.feedback}</div>
+        </div>
         </div>
     )
 }
@@ -40,9 +41,10 @@ export const PhotoDiv = props=>(
     <div className = 'col-sm-12'>
     <button id='photoBtn' onClick={props.editFunc}><FontAwesome name='edit' /></button>
     <p><img src={props.photoPath} ></img></p>
-<p className = 'hidden hiddenInput'>
-    <Input type ='file' id='photo' func={props.function} />
-</p>
+<div className = 'hidden hiddenInput'>
+    <Input type ='file' id='photo' func={props.function} stateValue={props.stateValue} />
+<div className="invalid-feedback">{props.feedback}</div>
+</div>
 </div>
 </div>
 )
@@ -50,17 +52,17 @@ export const PhotoDiv = props=>(
 export const GenderDiv= props=>(
     <div className = 'genderBlock d-flex'>
     <button id='genderBtn' onClick={props.editFunc}><FontAwesome name='edit' /></button>
-    <p>Gender:</p>
-<p>{props.name}</p>
-<p className = 'hidden hiddenInput'>
-    <select onChange={props.function} className = 'form-control'>
-    <option value = 'male'>Male</option>
-    <option value = 'female'>Female</option>
+    <div className='w30'>Gender:</div>
+<div className='w30'>{props.name}</div>
+<div className = 'w30 hidden hiddenInput'>
+    <select value={props.optionValue} onChange={props.function} className = 'form-control'>
+    <option value = 'male'>male</option>
+    <option value = 'female'>female</option>
     </select>
-    </p>
+    </div>
     </div>
 )
 
 export const Input = props => (
-    <input className = 'form-control' type ={props.type} placeholder={props.placeholder} id={props.id} onChange={props.func}/>
+    <input className = 'form-control' type ={props.type} placeholder={props.placeholder} id={props.id} onChange={props.func} value={props.stateValue}/>
 );

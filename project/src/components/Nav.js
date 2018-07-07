@@ -5,41 +5,55 @@ import {Link, withRouter} from 'react-router-dom'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import $ from 'jquery'
+import {addValue} from "../actions";
 const {friends, news, main, search, settings } = require ('../constants');
 
 
 const {onClickNews, onClickMain, onClickFriends, onClickSettings, onClickSearch} = require('../constants');
 const AjaxRequest = require ('../components/Requests.js');
 
+
 const UserBlockRouteComponent = withRouter(
     class UserBlock extends React.Component{
-        successFunc(data, ...args){
+         static async changeState(user, props){
+            props.dispatch(addValue('name', user.name, true));
+            props.dispatch(addValue('surName', user.surName, true));
+            props.dispatch(addValue('email', user.email, true));
+            props.dispatch(addValue('photo', user.photo, true));
+            props.dispatch(addValue('middleName', user.middleName, true));
+            props.dispatch(addValue('age', user.age, true));
+            props.dispatch(addValue('gender', user.gender, true));
+        }
+
+         successFunc(data, ...args){
             let props = args[0];
             let path = args[1];
-            props.history.push(path);
+            let user = args[2];
+            let changeState = args[3];
+            changeState(user, props).then(props.history.push(path));
         }
         onClickMain (e, user){
             e.preventDefault();
-            AjaxRequest.sendRequest(onClickMain, 'GET', null, null, null, user.token, this.successFunc, this.props, main);
+            AjaxRequest.sendRequest(onClickMain, 'GET', null, null, null, user.token, this.successFunc, this.props, main, user, UserBlockRouteComponent.changeState);
         }
 
         onClickFriends (e, user){
             e.preventDefault();
-            AjaxRequest.sendRequest(onClickFriends, 'GET', null, null, null, user.token, this.successFunc, this.props, friends);
+            AjaxRequest.sendRequest(onClickFriends, 'GET', null, null, null, user.token, this.successFunc, this.props, friends, user, UserBlockRouteComponent.changeState);
         }
         onClickSearch(e, user){
             e.preventDefault();
-            AjaxRequest.sendRequest(onClickSearch, 'GET', null, null, null, user.token, this.successFunc, this.props, search);
+            AjaxRequest.sendRequest(onClickSearch, 'GET', null, null, null, user.token, this.successFunc, this.props, search, user, UserBlockRouteComponent.changeState);
         }
 
         onClickNews(e, user) {
             e.preventDefault();
-            AjaxRequest.sendRequest(onClickNews, 'GET', null, null, null, user.token, this.successFunc, this.props, news);
+            AjaxRequest.sendRequest(onClickNews, 'GET', null, null, null, user.token, this.successFunc, this.props, news, user, UserBlockRouteComponent.changeState);
         }
 
         onClickSettings (e, user){
             e.preventDefault();
-            AjaxRequest.sendRequest(onClickSettings, 'GET', null, null, null, user.token, this.successFunc, this.props, settings);
+            AjaxRequest.sendRequest(onClickSettings, 'GET', null, null, null, user.token, this.successFunc, this.props, settings, user, UserBlockRouteComponent.changeState);
         }
         render(){
             const user = JSON.parse(localStorage.getItem('user'));
