@@ -41,7 +41,6 @@ const myMainComponent = withRouter (class Main extends Component {
     }
 
     successFunc (data, ...args){
-        console.log(data);
         if(data==='emailError'){
             $('#email').addClass('is-invalid');
         } else{

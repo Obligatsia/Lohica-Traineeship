@@ -66,3 +66,16 @@ export const GenderDiv= props=>(
 export const Input = props => (
     <input className = 'form-control' type ={props.type} placeholder={props.placeholder} id={props.id} onChange={props.func} value={props.stateValue}/>
 );
+
+export const FriendBlock= props =>(
+    <div className='d-flex'>
+    <div className='col-sm-2'> <img src={props.imgPath}/></div>
+    <div className='d-flex flex-column col-sm-5'>
+    <p>{props.name}</p>
+    <p>{props.surName}</p>
+    <p>{props.gender}</p>
+    <p>{props.age +' years old'}</p>
+    </div>
+    <div className='col-sm-4'><Input type='button' className='btn btn-warning' func={props.func} stateValue='Add to friend'/></div>
+    </div>
+)

@@ -11,7 +11,7 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn} = require('../src/constants');
+const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn, findFriend} = require('../src/constants');
 const {storage} = require('./storage');
 const randtoken = require('rand-token');
 
@@ -26,10 +26,9 @@ mongoose.connect(mongoConnect, ((err)=>{
 const app = express();
 app.use(cors());
 
-// app.use('/users', users);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text());
 
 const refreshTokens = {}
 
@@ -141,6 +140,23 @@ app.post(editUser, upload.single('photo'),(req, res, next) => {
                     }
             })
 });
+
+app.post(findFriend, (req, res, next) => {
+        const friendName = req.body;
+        Users.find({name: friendName}, function (err, user) {
+            if(user.length){
+                res.send(user)
+            } else{
+                res.send('no users')
+            }
+        })
+})
+
+
+
+
+
+
 
 app.post(sendAuthorizesUser, (req, res, next) => {
     let authUser = req.body;
