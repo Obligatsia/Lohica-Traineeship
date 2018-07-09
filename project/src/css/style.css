@@ -2,6 +2,10 @@
     width: 100%;
     margin: 0 auto;
 }
+.hidden{
+    display: none!important;
+}
+
 /*====================================================================================*/
 header{
     padding: 10px;
@@ -94,6 +98,39 @@ header img{
 }
 /*=====================================================================================================*/
 
+.userInfo{
+    margin-top: 10px;
+}
+.userInfo .form-control{
+    padding: 3px;
+}
 .photoBlock img{
     width: 100%;
+}
+.infoBlock .w30{
+    margin-top: 13px;
+    width: 30%;
+    margin-bottom: 5px;
+}
+.infoBlock>div{
+    height: 60px;
+}
+.userInfo .buttons{
+    margin-top: 30px;
+    width: auto;
+}
+.buttons input{
+    margin-right: 5px;
+}
+.userInfo .fa{
+    vertical-align: super;
+}
+.userInfo .fa:focus,
+.userInfo button:focus{
+   outline: none;
+}
+.userInfo button{
+    background: none;
+    border: none;
+    cursor: pointer;
 }

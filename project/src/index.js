@@ -23,6 +23,7 @@ const store = createStore(rootReducer);
 const parent = document.getElementById('main');
 
 
+
 render(
 <Provider store={store}>
 
@@ -31,7 +32,8 @@ render(
     <Route path="/register" component={App} />
 <Route path="/welcomePage" component={WelcomePage} />
 <Route path="/logIn" component={LogInPage} />
-<Route path="/main" component={MainPage} />
+<Route path="/main" component={MainPage}  />
+
 <Route path="/news" component={NewsPage} />
 <Route path="/friends" component={FriendsPage} />
 <Route path="/settings" component={SettingsPage} />

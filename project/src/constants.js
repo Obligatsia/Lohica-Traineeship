@@ -24,6 +24,8 @@ const news = '/news';
 const addUsers = '/addUser';
 const imgPath = 'public/usersImg';
 const sendAuthorizesUser = '/sendAuthorizedUser';
+const editUserUrl = 'http://localhost:8000/editUser';
+const editUser = '/editUser';
 
 
 module.exports = {
@@ -52,7 +54,9 @@ module.exports = {
     search,
     addUsers,
     imgPath,
-    sendAuthorizesUser
+    sendAuthorizesUser,
+    editUser,
+    editUserUrl,
 
 
 }

@@ -31,4 +31,8 @@ module.exports = class Validation {
         return result;
     }
 
+    static validateGender(){
+        return true;
+    }
+
 };

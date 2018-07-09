@@ -9,6 +9,7 @@ let userSchema = new mongoose.Schema({
     age: Number,
     middleName: String,
     password: String,
+    token: String,
     updated_at: { type: Date, default: Date.now },
 });
 
