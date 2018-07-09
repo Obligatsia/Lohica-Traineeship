@@ -147,6 +147,7 @@ header img{
 }
 .friendInfo img{
     width: 100%;
+    height: 100%;
 }
 .friendInfo .col-sm-2{
     padding-left: 0;

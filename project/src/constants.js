@@ -28,6 +28,10 @@ const editUserUrl = 'http://localhost:8000/editUser';
 const findFriendUrl = 'http://localhost:8000/findFriend';
 const editUser = '/editUser';
 const findFriend = '/findFriend';
+const addFriend = '/addFriend';
+const addFriendUrl = 'http://localhost:8000/addFriend';
+const deleteFriend = '/deleteFriend';
+const deleteFriendUrl = 'http://localhost:8000/deleteFriend';
 
 
 module.exports = {
@@ -60,7 +64,11 @@ module.exports = {
     editUser,
     editUserUrl,
     findFriendUrl,
-    findFriend
+    findFriend,
+    addFriend,
+    addFriendUrl,
+    deleteFriend,
+    deleteFriendUrl
 
 
 }

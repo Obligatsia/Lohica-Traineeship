@@ -11,7 +11,8 @@ export const addFriend = (friend) => ({
     payload:{friend}
 })
 
-export const clearFriend = (friend) => ({
+export const clearFriend = () => ({
     type: 'CLEAR',
     id: nextValueId++,
+
 })

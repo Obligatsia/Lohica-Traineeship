@@ -1,5 +1,6 @@
 import React from 'react'
 import FontAwesome from 'react-fontawesome';
+import $ from 'jquery'
 
 
 export const FormGroup = props=>(
@@ -64,18 +65,41 @@ export const GenderDiv= props=>(
 )
 
 export const Input = props => (
-    <input className = 'form-control' type ={props.type} placeholder={props.placeholder} id={props.id} onChange={props.func} value={props.stateValue}/>
+    <input className = {props.classNames+' form-control'} type ={props.type} placeholder={props.placeholder} id={props.id} onChange={props.func} value={props.stateValue} onClick={props.clickFunc}/>
 );
 
-export const FriendBlock= props =>(
-    <div className='d-flex'>
-    <div className='col-sm-2'> <img src={props.imgPath}/></div>
+export const FriendBlock= props =>{
+    const user = JSON.parse(localStorage.getItem('user'));
+    let addBtn;
+    let deleteBtn;
+    if(user.friends.length){
+        user.friends.forEach((friend)=>{
+            addBtn=(friend._id!==props.id)?'':'hidden ';
+            deleteBtn=(friend._id===props.id)?'':'hidden ';
+        }) 
+    } else{
+        addBtn='';
+        deleteBtn='hidden';
+    }
+    
+   
+
+
+    return(
+        <div className='d-flex' id={props.id}>
+        <div className='col-sm-2'> <img src={'usersImg/' +props.imgPath}/></div>
     <div className='d-flex flex-column col-sm-5'>
-    <p>{props.name}</p>
+        <p>{props.name}</p>
     <p>{props.surName}</p>
     <p>{props.gender}</p>
     <p>{props.age +' years old'}</p>
     </div>
-    <div className='col-sm-4'><Input type='button' className='btn btn-warning' func={props.func} stateValue='Add to friend'/></div>
-    </div>
+    <div className='col-sm-4'><Input type='button'  classNames={props.class+' '+addBtn+' btn btn-info'} clickFunc={props.addFriend} stateValue='Add to friends' id='addFriend'/> <Input type='button' classNames={props.class+' '+deleteBtn+' btn btn-danger'} clickFunc={props.deleteFriend} stateValue='Delete friend' id='deleteFriend'/></div>
+        </div>
 )
+
+}
+
+
+
+

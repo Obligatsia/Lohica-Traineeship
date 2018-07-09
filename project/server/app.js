@@ -11,7 +11,7 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn, findFriend} = require('../src/constants');
+const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn, findFriend, addFriend, deleteFriend} = require('../src/constants');
 const {storage} = require('./storage');
 const randtoken = require('rand-token');
 
@@ -135,7 +135,8 @@ app.post(editUser, upload.single('photo'),(req, res, next) => {
                                 user.photo.name = req.file.filename;
                             }
                             user.save(function(err, upUser){
-                                return res.send(user);                            })
+                                return res.send(user);
+                            })
                         })
                     }
             })
@@ -143,7 +144,7 @@ app.post(editUser, upload.single('photo'),(req, res, next) => {
 
 app.post(findFriend, (req, res, next) => {
         const friendName = req.body;
-        Users.find({name: friendName}, function (err, user) {
+        Users.find({name: {$regex : "^" + req.body}}, function (err, user) {
             if(user.length){
                 res.send(user)
             } else{
@@ -152,8 +153,47 @@ app.post(findFriend, (req, res, next) => {
         })
 })
 
+app.post(addFriend, (req, res, next) => {
+    const userId = req.body[0];
+    const friendId = req.body[1];
+    Users.findById(friendId, function(err, friend){
+        Users.findById(userId, function(err, user){
+            friend.friends.push(user);
+            friend.save(function(err, upFriend){})
+        })
+    })
 
+    Users.findById(userId, function(err, user){
+        Users.findById(friendId, function(err, friend){
+            user.friends.push(friend);
+            user.save(function(err, upUser){
+                res.send(user);
+            })
 
+        })
+
+    })
+})
+
+app.post(deleteFriend, (req, res, next) => {
+        const userId = req.body[0];
+    const friendId = req.body[1];
+    Users.findById(friendId, function(err, friend){
+        Users.findById(userId, function(err, user){
+            friend.friends.slice(user, 1);
+            friend.save(function(err, upFriend){})
+        })
+    })
+
+    Users.findById(userId, function(err, user){
+        Users.findById(friendId, function(err, friend){
+            Users.update({_id:user._id}, {$pull: {friends: {_id:friend._id}}})
+            console.log(user.friends.length);
+
+        })
+
+    })
+})
 
 
 
