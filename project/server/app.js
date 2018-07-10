@@ -156,42 +156,53 @@ app.post(findFriend, (req, res, next) => {
 app.post(addFriend, (req, res, next) => {
     const userId = req.body[0];
     const friendId = req.body[1];
+    const userToken = req.body[2];
     Users.findById(friendId, function(err, friend){
         Users.findById(userId, function(err, user){
-            friend.friends.push(user);
+            friend.friends.push(userId);
             friend.save(function(err, upFriend){})
         })
     })
 
     Users.findById(userId, function(err, user){
         Users.findById(friendId, function(err, friend){
-            user.friends.push(friend);
+            user.friends.push(friendId);
+            user.token=userToken;
             user.save(function(err, upUser){
                 res.send(user);
             })
-
         })
-
     })
 })
 
 app.post(deleteFriend, (req, res, next) => {
         const userId = req.body[0];
     const friendId = req.body[1];
+    const userToken = req.body[2];
+
     Users.findById(friendId, function(err, friend){
         Users.findById(userId, function(err, user){
-            friend.friends.slice(user, 1);
-            friend.save(function(err, upFriend){})
+            for(let i=0; i<friend.friends.length; i++) {
+                    if (friend.friends[i]===userId) {
+                        friend.friends.splice(i, 1);
+                        friend.save(function(err, upFriend){})
+                    }
+                }
         })
     })
 
     Users.findById(userId, function(err, user){
         Users.findById(friendId, function(err, friend){
-            Users.update({_id:user._id}, {$pull: {friends: {_id:friend._id}}})
-            console.log(user.friends.length);
-
+            for(let i=0; i<user.friends.length; i++) {
+                if (user.friends[i]===friendId) {
+                    user.friends.splice(i, 1);
+                    user.token=userToken;
+                    user.save(function(err, upUser){
+                        res.send(user);
+                    })
+                }
+            }
         })
-
     })
 })
 

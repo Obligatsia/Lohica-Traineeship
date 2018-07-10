@@ -26,35 +26,23 @@ const mySearchComponent = withRouter (class Search extends Component {
         }
     }
 
-    successAddFunc(data, props){
-        props.dispatch(addValue('friends', data.friends, true))
+
+    successChangeStateFunc(data, props, target){
+        props.dispatch(addValue('friends', data.friends, true));
+        data.middleName=(data.middleName==='undefined')?'':data.middleName;
         let jsonUser = JSON.stringify(data);
         localStorage.setItem('user', jsonUser);
+        $(target.parentNode.children[0]).toggleClass('hidden');
+        $(target.parentNode.children[1]).toggleClass('hidden');
     }
 
-    successDelFunc(data, props){
-        console.log(data);
-        // props.dispatch(addValue('friends', data.friends, true))
-        // let jsonUser = JSON.stringify(data);
-        // localStorage.setItem('user', jsonUser);
-    }
-
-    deleteFriend(e, user, props, block){
+    changeFriendsState(e, user, props, block, url){
         let userId = user._id;
         let friendId = block[0]._id;
-        let idArray=[userId, friendId];
+        let idArray=[userId, friendId, user.token];
         let idArr=JSON.stringify(idArray);
-        AjaxRequest.sendRequest(deleteFriendUrl, 'POST', idArr, 'application/json; charset=utf-8', true, user.token, this.succesDelFunc, props)
+        AjaxRequest.sendRequest(url, 'POST', idArr, 'application/json; charset=utf-8', true, user.token, this.successChangeStateFunc, props, e.target)
     }
-
-    addFriend(e, user, props, block){
-        let userId = user._id;
-        let friendId = block[0]._id;
-        let idArray=[userId, friendId];
-        let idArr=JSON.stringify(idArray);
-        AjaxRequest.sendRequest(addFriendUrl, 'POST', idArr, 'application/json; charset=utf-8', true, user.token, this.successAddFunc, props)
-    }
-
 
     showFriends(e, user, props, friendsArr){
         const value = e.target.value;
@@ -77,7 +65,7 @@ const mySearchComponent = withRouter (class Search extends Component {
             <Input id='inputForSearch' type = 'text' placeholder='Enter the name' func={(e)=>this.showFriends(e, user, this.props, friendsArr)} />
         </div>
         <div className='f-flex flex-column friendInfo'>
-            {friendsArr.map((block)=><FriendBlock imgPath={block[0].photo.name} id={block[0]._id} name={block[0].name} surName={block[0].surName} gender={block[0].gender} age={block[0].age} addFriend={(e)=>this.addFriend(e, user, this.props, block)} deleteFriend={(e)=>this.deleteFriend(e, user, this.props, block)}/>
+            {friendsArr.map((block)=><FriendBlock imgPath={block[0].photo.name} id={block[0]._id} name={block[0].name} surName={block[0].surName} gender={block[0].gender} age={block[0].age} addFriend={(e)=>this.changeFriendsState(e, user, this.props, block, addFriendUrl)} deleteFriend={(e)=>this.changeFriendsState(e, user, this.props, block, deleteFriendUrl)}/>
     )}
     </div>
         </div>

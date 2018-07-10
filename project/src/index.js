@@ -17,7 +17,7 @@ import FriendsPage from './components/pages/FriendsPage.js';
 import SearchPage from './components/pages/SearchPage.js';
 import NewsPage from './components/pages/NewsPage.js';
 import SettingsPage from './components/pages/SettingsPage.js';
-
+import {PrivateRoute, UnregisterRoute} from './components/protectRoute'
 const store = createStore(rootReducer);
 
 const parent = document.getElementById('main');
@@ -29,15 +29,14 @@ render(
 
     <BrowserRouter>
     <div>
-    <Route path="/register" component={App} />
-<Route path="/welcomePage" component={WelcomePage} />
+    <UnregisterRoute path="/register" component={App} />
+<UnregisterRoute path="/welcomePage" component={WelcomePage} />
 <Route path="/logIn" component={LogInPage} />
-<Route path="/main" component={MainPage}  />
-
-<Route path="/news" component={NewsPage} />
-<Route path="/friends" component={FriendsPage} />
-<Route path="/settings" component={SettingsPage} />
-<Route path="/search" component={SearchPage} />
+<PrivateRoute path='/main' component={MainPage} />
+<PrivateRoute path="/news" component={NewsPage} />
+<PrivateRoute path="/friends" component={FriendsPage} />
+<PrivateRoute path="/settings" component={SettingsPage} />
+<PrivateRoute path="/search" component={SearchPage} />
 </div>
 </BrowserRouter>
 

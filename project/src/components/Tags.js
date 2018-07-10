@@ -30,7 +30,7 @@ export const InfoDiv = props=>{
     <div className='w30'>{props.name}</div>
         <div className='w30'>{props.value}</div>
         <div className = 'w30 hidden hiddenInput'>
-            <Input type ={props.type} id={props.id} func={props.function} stateValue={props.stateValue}/>
+            <Input type ={props.type} id={props.id} func={props.changeFunc} stateValue={props.stateValue}/>
     <div className="invalid-feedback">{props.feedback}</div>
         </div>
         </div>
@@ -43,7 +43,7 @@ export const PhotoDiv = props=>(
     <button id='photoBtn' onClick={props.editFunc}><FontAwesome name='edit' /></button>
     <p><img src={props.photoPath} ></img></p>
 <div className = 'hidden hiddenInput'>
-    <Input type ='file' id='photo' func={props.function} stateValue={props.stateValue} />
+    <Input type ='file' id='photo' func={props.changeFunc} stateValue={props.stateValue} />
 <div className="invalid-feedback">{props.feedback}</div>
 </div>
 </div>
@@ -56,7 +56,7 @@ export const GenderDiv= props=>(
     <div className='w30'>Gender:</div>
 <div className='w30'>{props.name}</div>
 <div className = 'w30 hidden hiddenInput'>
-    <select value={props.optionValue} onChange={props.function} className = 'form-control'>
+    <select value={props.optionValue} onChange={props.changeFunc} className = 'form-control'>
     <option value = 'male'>male</option>
     <option value = 'female'>female</option>
     </select>
@@ -70,20 +70,16 @@ export const Input = props => (
 
 export const FriendBlock= props =>{
     const user = JSON.parse(localStorage.getItem('user'));
-    let addBtn;
-    let deleteBtn;
+    let addBtn='';
+    let deleteBtn='hidden';
     if(user.friends.length){
         user.friends.forEach((friend)=>{
-            addBtn=(friend._id!==props.id)?'':'hidden ';
-            deleteBtn=(friend._id===props.id)?'':'hidden ';
+            if(friend===props.id){
+                addBtn='hidden';
+                deleteBtn='';
+            }
         }) 
-    } else{
-        addBtn='';
-        deleteBtn='hidden';
     }
-    
-   
-
 
     return(
         <div className='d-flex' id={props.id}>
