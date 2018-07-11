@@ -10,6 +10,7 @@ let userSchema = new mongoose.Schema({
     middleName: String,
     password: String,
     token: String,
+    friends: {type: Array, optional: true},
     updated_at: { type: Date, default: Date.now },
 });
 

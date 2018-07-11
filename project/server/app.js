@@ -11,7 +11,7 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn} = require('../src/constants');
+const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn, findFriend, addFriend, deleteFriend} = require('../src/constants');
 const {storage} = require('./storage');
 const randtoken = require('rand-token');
 
@@ -26,10 +26,9 @@ mongoose.connect(mongoConnect, ((err)=>{
 const app = express();
 app.use(cors());
 
-// app.use('/users', users);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text());
 
 const refreshTokens = {}
 
@@ -136,11 +135,79 @@ app.post(editUser, upload.single('photo'),(req, res, next) => {
                                 user.photo.name = req.file.filename;
                             }
                             user.save(function(err, upUser){
-                                return res.send(user);                            })
+                                return res.send(user);
+                            })
                         })
                     }
             })
 });
+
+app.post(findFriend, (req, res, next) => {
+        const friendName = req.body;
+        Users.find({name: {$regex : "^" + req.body}}, function (err, user) {
+            if(user.length){
+                res.send(user)
+            } else{
+                res.send('no users')
+            }
+        })
+})
+
+app.post(addFriend, (req, res, next) => {
+    const userId = req.body[0];
+    const friendId = req.body[1];
+    const userToken = req.body[2];
+    Users.findById(friendId, function(err, friend){
+        Users.findById(userId, function(err, user){
+            friend.friends.push(userId);
+            friend.save(function(err, upFriend){})
+        })
+    })
+
+    Users.findById(userId, function(err, user){
+        Users.findById(friendId, function(err, friend){
+            user.friends.push(friendId);
+            user.token=userToken;
+            user.save(function(err, upUser){
+                res.send(user);
+            })
+        })
+    })
+})
+
+app.post(deleteFriend, (req, res, next) => {
+        const userId = req.body[0];
+    const friendId = req.body[1];
+    const userToken = req.body[2];
+
+    Users.findById(friendId, function(err, friend){
+        Users.findById(userId, function(err, user){
+            for(let i=0; i<friend.friends.length; i++) {
+                    if (friend.friends[i]===userId) {
+                        friend.friends.splice(i, 1);
+                        friend.save(function(err, upFriend){})
+                    }
+                }
+        })
+    })
+
+    Users.findById(userId, function(err, user){
+        Users.findById(friendId, function(err, friend){
+            for(let i=0; i<user.friends.length; i++) {
+                if (user.friends[i]===friendId) {
+                    user.friends.splice(i, 1);
+                    user.token=userToken;
+                    user.save(function(err, upUser){
+                        res.send(user);
+                    })
+                }
+            }
+        })
+    })
+})
+
+
+
 
 app.post(sendAuthorizesUser, (req, res, next) => {
     let authUser = req.body;

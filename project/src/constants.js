@@ -25,7 +25,13 @@ const addUsers = '/addUser';
 const imgPath = 'public/usersImg';
 const sendAuthorizesUser = '/sendAuthorizedUser';
 const editUserUrl = 'http://localhost:8000/editUser';
+const findFriendUrl = 'http://localhost:8000/findFriend';
 const editUser = '/editUser';
+const findFriend = '/findFriend';
+const addFriend = '/addFriend';
+const addFriendUrl = 'http://localhost:8000/addFriend';
+const deleteFriend = '/deleteFriend';
+const deleteFriendUrl = 'http://localhost:8000/deleteFriend';
 
 
 module.exports = {
@@ -57,6 +63,12 @@ module.exports = {
     sendAuthorizesUser,
     editUser,
     editUserUrl,
+    findFriendUrl,
+    findFriend,
+    addFriend,
+    addFriendUrl,
+    deleteFriend,
+    deleteFriendUrl
 
 
 }

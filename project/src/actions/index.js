@@ -4,3 +4,15 @@ export const addValue = (name, text, isValid) => ({
     id: nextValueId++,
     payload:{name, value: text, isValid: isValid}
 })
+
+export const addFriend = (friend) => ({
+    type: 'ADD_FRIEND',
+    id: nextValueId++,
+    payload:{friend}
+})
+
+export const clearFriend = () => ({
+    type: 'CLEAR',
+    id: nextValueId++,
+
+})

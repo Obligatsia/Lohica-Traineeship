@@ -22,9 +22,9 @@ const myMainComponent = withRouter (class Main extends Component {
         this.onPhotoChange = MyRouterComponent.onPhotoChange.bind(this);
         this.onMiddleNameChange = MyRouterComponent.onMiddleNameChange.bind(this);
         this.editElement = this.editElement.bind(this);
-        if(!localStorage.getItem('user')){
-            this.props.history.push(logIn);
-        }
+        // if(!localStorage.getItem('user')){
+        //     this.props.history.push(logIn);
+        // }
 
 
     }
@@ -41,7 +41,6 @@ const myMainComponent = withRouter (class Main extends Component {
     }
 
     successFunc (data, ...args){
-        console.log(data);
         if(data==='emailError'){
             $('#email').addClass('is-invalid');
         } else{
@@ -128,21 +127,21 @@ const myMainComponent = withRouter (class Main extends Component {
         return (
         <div className ='d-flex userInfo'>
 
-            <PhotoDiv photoPath = {photoPath} function = {(e)=>MyRouterComponent.onPhotoChange(e, Validation.validatePhoto, 'photo', this.props)} editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.photo.path} feedback='Files formate only JPEG, JPG, PNG (40kb - 5mb)'/>
+            <PhotoDiv photoPath = {photoPath} changeFunc = {(e)=>MyRouterComponent.onPhotoChange(e, Validation.validatePhoto, 'photo', this.props)} editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.photo.path} feedback='Files formate only JPEG, JPG, PNG (40kb - 5mb)'/>
 
             <div className = 'infoBlock d-flex flex-column col-sm-7'>
 
-            <InfoDiv class='surNameBlock d-flex' name = 'SurName:' value={user.surName} type='text' id='surName' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateName, 'surName', this.props)} editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.surName.value} feedback='Only latin letters'/>
+            <InfoDiv class='surNameBlock d-flex' name = 'SurName:' value={user.surName} type='text' id='surName' changeFunc = {(e)=>MyRouterComponent.onChange(e, Validation.validateName, 'surName', this.props)} editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.surName.value} feedback='Only latin letters'/>
 
-        <InfoDiv class='nameBlock d-flex' name = 'Name:' value={user.name} type='text' id='name' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateName, 'name', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.name.value} feedback='Only latin letters'/>
+        <InfoDiv class='nameBlock d-flex' name = 'Name:' value={user.name} type='text' id='name' changeFunc = {(e)=>MyRouterComponent.onChange(e, Validation.validateName, 'name', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.name.value} feedback='Only latin letters'/>
 
-        <InfoDiv class='middleNameBlock d-flex' name = 'MiddleName:' value={user.middleName} type='text' id='middleName' function = {(e)=>MyRouterComponent.onMiddleNameChange(e, Validation.validateName, 'middleName', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.middleName.value} feedback='Only latin letters'/>
+        <InfoDiv class='middleNameBlock d-flex' name = 'MiddleName:' value={user.middleName} type='text' id='middleName' changeFunc = {(e)=>MyRouterComponent.onMiddleNameChange(e, Validation.validateName, 'middleName', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.middleName.value} feedback='Only latin letters'/>
 
-        <InfoDiv class='emailBlock d-flex' name = 'Email:' value={user.email} type='text' id='email' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateEmail, 'email', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.email.value} feedback='Please, enter correct email'/>
+        <InfoDiv class='emailBlock d-flex' name = 'Email:' value={user.email} type='text' id='email' changeFunc = {(e)=>MyRouterComponent.onChange(e, Validation.validateEmail, 'email', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.email.value} feedback='Please, enter correct email'/>
 
-        <InfoDiv class='ageBlock d-flex' name = 'Age:' value={user.age} type='number' id='age' function = {(e)=>MyRouterComponent.onChange(e, Validation.validateAge, 'age', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.age.value} feedback='Please, enter correct age'/>
+        <InfoDiv class='ageBlock d-flex' name = 'Age:' value={user.age} type='number' id='age' changeFunc = {(e)=>MyRouterComponent.onChange(e, Validation.validateAge, 'age', this.props)}  editFunc = {(e)=>this.editElement(e, user, this.props)} stateValue={this.props.user.age.value} feedback='Please, enter correct age'/>
 
-        <GenderDiv function = {(e)=>MyRouterComponent.onChange(e, Validation.validateGender, 'gender', this.props)} optionValue={this.props.user.gender.value} name = {user.gender}  editFunc = {(e)=>this.editElement(e, user, this.props)}/>
+        <GenderDiv changeFunc = {(e)=>MyRouterComponent.onChange(e, Validation.validateGender, 'gender', this.props)} optionValue={this.props.user.gender.value} name = {user.gender}  editFunc = {(e)=>this.editElement(e, user, this.props)}/>
 
             <p className = 'buttons'>
             <input type ='button' className='btn btn-primary' id='editInputs' value='Edit all' onClick = {(e)=>this.editInputs(e, user, this.props)}></input>
