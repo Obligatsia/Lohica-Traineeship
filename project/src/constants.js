@@ -21,6 +21,7 @@ const friends = '/friends';
 const search = '/search';
 const settings = '/settings';
 const news = '/news';
+const toFriend = '/toFriend';
 const addUsers = '/addUser';
 const imgPath = 'public/usersImg';
 const sendAuthorizesUser = '/sendAuthorizedUser';
@@ -32,6 +33,8 @@ const addFriend = '/addFriend';
 const addFriendUrl = 'http://localhost:8000/addFriend';
 const deleteFriend = '/deleteFriend';
 const deleteFriendUrl = 'http://localhost:8000/deleteFriend';
+const goToFriendUrl = 'http://localhost:8000/goToFriend';
+const goToFriend = '/goToFriend';
 
 
 module.exports = {
@@ -68,7 +71,10 @@ module.exports = {
     addFriend,
     addFriendUrl,
     deleteFriend,
-    deleteFriendUrl
+    deleteFriendUrl,
+    goToFriendUrl,
+    goToFriend,
+    toFriend
 
 
 }

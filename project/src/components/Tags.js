@@ -1,7 +1,8 @@
 import React from 'react'
 import FontAwesome from 'react-fontawesome';
 import $ from 'jquery'
-
+import {getUser} from './protectRoute'
+import MyFriendsComponent from './Friends';
 
 export const FormGroup = props=>(
 <div className='form-group'>
@@ -69,18 +70,17 @@ export const Input = props => (
 );
 
 export const FriendBlock= props =>{
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(getUser());
     let addBtn='';
     let deleteBtn='hidden';
     if(user.friends.length){
         user.friends.forEach((friend)=>{
-            if(friend===props.id){
+            if(friend.id===props.id){
                 addBtn='hidden';
                 deleteBtn='';
             }
         }) 
     }
-
     return(
         <div className='d-flex' id={props.id}>
         <div className='col-sm-2'> <img src={'usersImg/' +props.imgPath}/></div>
@@ -93,9 +93,45 @@ export const FriendBlock= props =>{
     <div className='col-sm-4'><Input type='button'  classNames={props.class+' '+addBtn+' btn btn-info'} clickFunc={props.addFriend} stateValue='Add to friends' id='addFriend'/> <Input type='button' classNames={props.class+' '+deleteBtn+' btn btn-danger'} clickFunc={props.deleteFriend} stateValue='Delete friend' id='deleteFriend'/></div>
         </div>
 )
-
 }
 
+export const MyFriendBlock=props=>(
+    <div className='d-flex'>
+    <div className='col-sm-3' onClick={props.func}>
+    <img src={'usersImg/' +props.path}/>
+    </div>
 
+    <div className='d-flex flex-column'>
+    <p>{props.name}</p>
+    <p>{props.surName}</p>
+
+</div>
+    </div>
+)
+
+export const FriendPageBlock=props=>{
+     let classForMidName=(props.middleName==='undefined')||(!props.middleName)?'hidden': '';
+    return(
+        <div className='d-flex'>
+        <div className='col-sm-3'>
+        <img src={'usersImg/' +props.path}/>
+    <p>{props.surName} {props.name} <span className={classForMidName}>{props.middleName}</span></p>
+    </div>
+    <div className='d-flex flex-column'>
+    <p>e-mail: {props.email}</p>
+    <p>age: {props.age}</p>
+    <p>gender: {props.gender}</p>
+    </div>
+    </div>
+        )
+}
+
+export const SmallBlock=props=>(
+    <div className='col-sm-3' onClick={props.frFunc}>
+    <img src={'usersImg/' +props.frPath}/>
+<p>{props.frName}</p>
+<p>{props.frSurName}</p>
+</div>
+)
 
 

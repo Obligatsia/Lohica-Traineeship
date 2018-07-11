@@ -5,7 +5,8 @@ import {Link, withRouter} from 'react-router-dom'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import $ from 'jquery'
-import {addValue} from "../actions";
+import {getUser} from './protectRoute'
+import {addFriend, addValue, clearFriend} from "../actions";
 const {friends, news, main, search, settings } = require ('../constants');
 
 
@@ -15,7 +16,7 @@ const AjaxRequest = require ('../components/Requests.js');
 
 const UserBlockRouteComponent = withRouter(
     class UserBlock extends React.Component{
-         static async changeState(user, props){
+         static async changeState(user, props, userFriends){
             props.dispatch(addValue('name', user.name, true));
             props.dispatch(addValue('surName', user.surName, true));
             props.dispatch(addValue('email', user.email, true));
@@ -23,14 +24,22 @@ const UserBlockRouteComponent = withRouter(
             props.dispatch(addValue('middleName', user.middleName, true));
             props.dispatch(addValue('age', user.age, true));
             props.dispatch(addValue('gender', user.gender, true));
+             props.dispatch(clearFriend());
+
+            if(userFriends){
+                userFriends.forEach((friend)=>{
+                    props.dispatch(addFriend(friend));
+                })
+            }
         }
 
          successFunc(data, ...args){
-            let props = args[0];
+             let userFriends=data.friends?data.friends:null;
+             let props = args[0];
             let path = args[1];
             let user = args[2];
-            let changeState = args[3];
-            changeState(user, props).then(props.history.push(path));
+             let changeState = args[3];
+            changeState(user, props, userFriends).then(props.history.push(path));
         }
         onClickMain (e, user){
             e.preventDefault();
@@ -38,8 +47,9 @@ const UserBlockRouteComponent = withRouter(
         }
 
         onClickFriends (e, user){
+            const userId=user._id;
             e.preventDefault();
-            AjaxRequest.sendRequest(onClickFriends, 'GET', null, null, null, user.token, this.successFunc, this.props, friends, user, UserBlockRouteComponent.changeState);
+            AjaxRequest.sendRequest(onClickFriends, 'POST', userId, 'text/plain; charset=utf-8', true, user.token, this.successFunc, this.props, friends, user, UserBlockRouteComponent.changeState);
         }
         onClickSearch(e, user){
             e.preventDefault();
@@ -56,7 +66,7 @@ const UserBlockRouteComponent = withRouter(
             AjaxRequest.sendRequest(onClickSettings, 'GET', null, null, null, user.token, this.successFunc, this.props, settings, user, UserBlockRouteComponent.changeState);
         }
         render(){
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = JSON.parse(getUser());
 
             return(
                 <nav className="nav flex-column col-sm-3 ">
@@ -72,7 +82,8 @@ const UserBlockRouteComponent = withRouter(
 )
 function mapStateToProps(state) {
     return {
-        user: state.user
+        user: state.user,
+        friends: state.friends
     };
 }
 
