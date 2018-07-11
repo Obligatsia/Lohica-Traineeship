@@ -160,3 +160,14 @@ header img{
     display: block;
     margin-top: 10px;
 }
+/*====================================================================================================*/
+#friendItem{
+    margin-top: 10px;
+}
+#friendItem img{
+    width: 100%;
+    height: 100%;
+}
+#friendItem .d-flex{
+    margin-bottom: 10px;
+}

@@ -20,10 +20,6 @@ const myRouterComponent = withRouter (class Form extends Component {
         this.onChange = myRouterComponent.onChange.bind(this);
         this.onPhotoChange = myRouterComponent.onPhotoChange.bind(this);
         this.onMiddleNameChange = myRouterComponent.onMiddleNameChange.bind(this);
-        if(JSON.parse(localStorage.getItem('user'))){
-            this.props.history.push(main);
-
-        }
     }
 
     successFunc (data, ...args ){

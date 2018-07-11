@@ -144,29 +144,33 @@ app.post(editUser, upload.single('photo'),(req, res, next) => {
 
 app.post(findFriend, (req, res, next) => {
         const friendName = req.body;
-        Users.find({name: {$regex : "^" + req.body}}, function (err, user) {
-            if(user.length){
-                res.send(user)
-            } else{
-                res.send('no users')
-            }
-        })
+        if(!friendName){
+            res.send('empty value')
+        }else{
+            Users.find({name: {$regex : "^" + req.body}}, function (err, user) {
+                if(user.length){
+                    res.send(user)
+                } else{
+                    res.send('no users')
+                }
+            })
+        }
 })
 
 app.post(addFriend, (req, res, next) => {
-    const userId = req.body[0];
-    const friendId = req.body[1];
-    const userToken = req.body[2];
+    [userId, friendId, userToken]=[req.body[0], req.body[1], req.body[2]]
     Users.findById(friendId, function(err, friend){
         Users.findById(userId, function(err, user){
-            friend.friends.push(userId);
+            let friendObj={name: user.name, surName: user.surName, id: userId, photo:user.photo.name}
+            friend.friends.push(friendObj);
             friend.save(function(err, upFriend){})
         })
     })
 
     Users.findById(userId, function(err, user){
         Users.findById(friendId, function(err, friend){
-            user.friends.push(friendId);
+            let friendObj={name: friend.name, surname: friend.surName, id: friendId, photo:friend.photo.name}
+            user.friends.push(friendObj);
             user.token=userToken;
             user.save(function(err, upUser){
                 res.send(user);
@@ -183,7 +187,7 @@ app.post(deleteFriend, (req, res, next) => {
     Users.findById(friendId, function(err, friend){
         Users.findById(userId, function(err, user){
             for(let i=0; i<friend.friends.length; i++) {
-                    if (friend.friends[i]===userId) {
+                    if (friend.friends[i].id===userId) {
                         friend.friends.splice(i, 1);
                         friend.save(function(err, upFriend){})
                     }
@@ -194,9 +198,10 @@ app.post(deleteFriend, (req, res, next) => {
     Users.findById(userId, function(err, user){
         Users.findById(friendId, function(err, friend){
             for(let i=0; i<user.friends.length; i++) {
-                if (user.friends[i]===friendId) {
+                if (user.friends[i].id===friendId) {
                     user.friends.splice(i, 1);
                     user.token=userToken;
+                    console.log(user.friends.length)
                     user.save(function(err, upUser){
                         res.send(user);
                     })
@@ -252,13 +257,24 @@ app.get(main, verifyToken, (req, res) => {
     })
 })
 
-app.get(friends, verifyToken, (req, res) => {
+
+let findUser = function findUser(id,callback){
+    const foundUser = Users.findOne({_id: id}, (err, userObj)=>{
+        callback(null,userObj)
+    });
+}
+
+app.post(friends, verifyToken, (req, res) => {
+    let userId = req.body;
     jwt.verify(req.token, secretKey, (err, authData)=>{
         if(err){
             console.log(err);
             res.send(403);
         } else{
-            res.send(200, authData);
+            Users.findById(userId, function(err, user){
+                let friends=user.friends;
+                res.send(200, ({authData, friends}));
+            })
         }
     })
 })

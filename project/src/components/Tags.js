@@ -1,7 +1,7 @@
 import React from 'react'
 import FontAwesome from 'react-fontawesome';
 import $ from 'jquery'
-
+import {getUser} from './protectRoute'
 
 export const FormGroup = props=>(
 <div className='form-group'>
@@ -69,18 +69,17 @@ export const Input = props => (
 );
 
 export const FriendBlock= props =>{
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(getUser());
     let addBtn='';
     let deleteBtn='hidden';
     if(user.friends.length){
         user.friends.forEach((friend)=>{
-            if(friend===props.id){
+            if(friend.id===props.id){
                 addBtn='hidden';
                 deleteBtn='';
             }
         }) 
     }
-
     return(
         <div className='d-flex' id={props.id}>
         <div className='col-sm-2'> <img src={'usersImg/' +props.imgPath}/></div>
@@ -93,8 +92,23 @@ export const FriendBlock= props =>{
     <div className='col-sm-4'><Input type='button'  classNames={props.class+' '+addBtn+' btn btn-info'} clickFunc={props.addFriend} stateValue='Add to friends' id='addFriend'/> <Input type='button' classNames={props.class+' '+deleteBtn+' btn btn-danger'} clickFunc={props.deleteFriend} stateValue='Delete friend' id='deleteFriend'/></div>
         </div>
 )
-
 }
+
+export const MyFriendBlock=props=>(
+    <div className='d-flex'>
+    <div className='col-sm-2'>
+    <img src={'usersImg/' +props.path}/>
+    </div>
+
+    <div className='d-flex flex-column'>
+    <p>{props.name}</p>
+    <p>{props.surName}</p>
+
+</div>
+    </div>
+
+)
+
 
 
 

@@ -8,7 +8,7 @@ import UserBlockRouteComponent from './Nav.js';
 import AjaxRequest from './Requests.js';
 import {editUserUrl, logIn} from '../constants';
 import {InfoDiv, PhotoDiv, GenderDiv, Input} from './Tags';
-
+import {getUser} from './protectRoute';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import {addValue} from "../actions";
@@ -22,11 +22,6 @@ const myMainComponent = withRouter (class Main extends Component {
         this.onPhotoChange = MyRouterComponent.onPhotoChange.bind(this);
         this.onMiddleNameChange = MyRouterComponent.onMiddleNameChange.bind(this);
         this.editElement = this.editElement.bind(this);
-        // if(!localStorage.getItem('user')){
-        //     this.props.history.push(logIn);
-        // }
-
-
     }
 
 
@@ -92,7 +87,7 @@ const myMainComponent = withRouter (class Main extends Component {
             }
         }
         if(!inValidElements.length){
-            const userLocal = JSON.parse(localStorage.getItem('user'));
+            const userLocal = JSON.parse(getUser());
 
             let user = this.props.user;
             let userFormData = new FormData();
@@ -117,7 +112,7 @@ const myMainComponent = withRouter (class Main extends Component {
 
 
     render(){
-        const user = JSON.parse(localStorage.getItem('user'));
+        const user = JSON.parse(getUser());
 
         const photoArr= user.photo.path.split('\\');
         const photoPath = photoArr[1]+'/'+photoArr[2];

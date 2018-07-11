@@ -5,10 +5,11 @@ import {addFriend, addValue, clearFriend} from '../actions/index'
 import AjaxRequest from './Requests.js';
 import {findFriendUrl, addFriendUrl, deleteFriendUrl} from '../constants';
 import $ from 'jquery'
-
+import {getUser} from './protectRoute'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
 import {Input, FriendBlock} from './Tags';
+import {fillArr} from './Friends';
 
 const mySearchComponent = withRouter (class Search extends Component {
 
@@ -16,6 +17,8 @@ const mySearchComponent = withRouter (class Search extends Component {
         props.dispatch(clearFriend());
         if(data==='no users'){
             $('#searchInput').addClass('noUsersMsg');
+        } else if(data==='empty value'){
+            props.dispatch(clearFriend());
         } else{
             $('#searchInput').removeClass('noUsersMsg');
             for(let key in data){
@@ -50,14 +53,9 @@ const mySearchComponent = withRouter (class Search extends Component {
     }
 
     render(){
-        const user = JSON.parse(localStorage.getItem('user'));
+        const user = JSON.parse(getUser());
         let friendsArr=[];
-
-        let list = this.props.friends.toArray();
-        list.forEach(function(item) {
-            let elem=item.toArray();
-            friendsArr.push (elem);
-        });
+        fillArr(friendsArr, this.props);
         return (
             <div className='col-sm-5 searchUser'>
         <div id='searchInput'>
