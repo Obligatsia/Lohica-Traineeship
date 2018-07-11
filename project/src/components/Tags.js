@@ -2,6 +2,7 @@ import React from 'react'
 import FontAwesome from 'react-fontawesome';
 import $ from 'jquery'
 import {getUser} from './protectRoute'
+import MyFriendsComponent from './Friends';
 
 export const FormGroup = props=>(
 <div className='form-group'>
@@ -96,7 +97,7 @@ export const FriendBlock= props =>{
 
 export const MyFriendBlock=props=>(
     <div className='d-flex'>
-    <div className='col-sm-2'>
+    <div className='col-sm-3' onClick={props.func}>
     <img src={'usersImg/' +props.path}/>
     </div>
 
@@ -106,10 +107,31 @@ export const MyFriendBlock=props=>(
 
 </div>
     </div>
-
 )
 
+export const FriendPageBlock=props=>{
+     let classForMidName=(props.middleName==='undefined')||(!props.middleName)?'hidden': '';
+    return(
+        <div className='d-flex'>
+        <div className='col-sm-3'>
+        <img src={'usersImg/' +props.path}/>
+    <p>{props.surName} {props.name} <span className={classForMidName}>{props.middleName}</span></p>
+    </div>
+    <div className='d-flex flex-column'>
+    <p>e-mail: {props.email}</p>
+    <p>age: {props.age}</p>
+    <p>gender: {props.gender}</p>
+    </div>
+    </div>
+        )
+}
 
-
+export const SmallBlock=props=>(
+    <div className='col-sm-3' onClick={props.frFunc}>
+    <img src={'usersImg/' +props.frPath}/>
+<p>{props.frName}</p>
+<p>{props.frSurName}</p>
+</div>
+)
 
 

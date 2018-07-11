@@ -17,6 +17,7 @@ import FriendsPage from './components/pages/FriendsPage.js';
 import SearchPage from './components/pages/SearchPage.js';
 import NewsPage from './components/pages/NewsPage.js';
 import SettingsPage from './components/pages/SettingsPage.js';
+import FriendPage from './components/pages/FriendPage.js';
 import {PrivateRoute, UnregisterRoute} from './components/protectRoute'
 const store = createStore(rootReducer);
 
@@ -37,6 +38,7 @@ render(
 <PrivateRoute path="/friends" component={FriendsPage} />
 <PrivateRoute path="/settings" component={SettingsPage} />
 <PrivateRoute path="/search" component={SearchPage} />
+<PrivateRoute path="/toFriend" component={FriendPage} />
 </div>
 </BrowserRouter>
 

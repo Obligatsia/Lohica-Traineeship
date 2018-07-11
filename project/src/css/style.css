@@ -164,10 +164,40 @@ header img{
 #friendItem{
     margin-top: 10px;
 }
+#friendItem>div{
+    border-bottom: 1px solid #dbdbdb;
+    width: 70%;
+    padding: 10px;
+}
 #friendItem img{
     width: 100%;
     height: 100%;
+    cursor: pointer;
 }
 #friendItem .d-flex{
     margin-bottom: 10px;
+}
+/*===========================================================================*/
+#friendPage{
+    margin-top: 10px;
+}
+#friendPage img{
+    width: 100%;
+    margin-bottom: 10px;
+}
+#friendPage .col-sm-8 .col-sm-3{
+    padding: 5px;
+}
+#friendPage .col-sm-8 .col-sm-3 img{
+    width: 70%;
+    height: 50%;
+    cursor: pointer;
+}
+#friendPage .col-sm-8 .col-sm-3 p{
+    margin-bottom: 0;
+}
+#friendPage .col-sm-8{
+    padding-left: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #5a6268;
 }

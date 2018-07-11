@@ -11,7 +11,7 @@ const Users = require('./models/Users.js');
 const multer = require('multer');
 const assert = require('assert');
 const jwt = require('jsonwebtoken');
-const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn, findFriend, addFriend, deleteFriend} = require('../src/constants');
+const {mongoConnect, addUsers,timeToExpire, secretKey, imgPath, sendAuthorizesUser, main, friends, search, settings, news, editUser, logIn, findFriend, addFriend, deleteFriend, goToFriend} = require('../src/constants');
 const {storage} = require('./storage');
 const randtoken = require('rand-token');
 
@@ -144,7 +144,8 @@ app.post(editUser, upload.single('photo'),(req, res, next) => {
 
 app.post(findFriend, (req, res, next) => {
         const friendName = req.body;
-        if(!friendName){
+        let isValid=Validation.validateName(friendName);
+        if(!friendName||!isValid){
             res.send('empty value')
         }else{
             Users.find({name: {$regex : "^" + req.body}}, function (err, user) {
@@ -258,11 +259,20 @@ app.get(main, verifyToken, (req, res) => {
 })
 
 
-let findUser = function findUser(id,callback){
-    const foundUser = Users.findOne({_id: id}, (err, userObj)=>{
-        callback(null,userObj)
-    });
-}
+app.post(goToFriend, verifyToken, (req, res) => {
+    let userId = req.body;
+    jwt.verify(req.token, secretKey, (err, authData)=>{
+        if(err){
+            console.log(err);
+            res.send(403);
+        } else{
+            Users.findById(userId, function(err, user){
+                res.send(200, ({authData, user}));
+            })
+        }
+    })
+})
+
 
 app.post(friends, verifyToken, (req, res) => {
     let userId = req.body;
